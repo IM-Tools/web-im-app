@@ -1,0 +1,24 @@
+#app {
+
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+/* body{
+  font-family: Helvetica Neue,Helvetica,Hiragino Sans GB,Microsoft YaHei,\\5FAE\8F6F\96C5\9ED1,Arial,sans-serif;
+  background: url('https://res.wx.qq.com/a/wx_fed/webwx/res/static/img/2zrdI1g.jpg') ;
+  background-size: cover;
+ 
+  height: 100%;
+  position: fixed;
+  width: 100%;
+} */
+#app .login-btn{
+  color: red;
+}
+#app .login-btn .el-form-item__content{
+  margin-left: 0px !important;
+}
