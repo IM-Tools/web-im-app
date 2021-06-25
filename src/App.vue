@@ -1,7 +1,6 @@
 <template>
  <router-view></router-view>
 </template>
-
 <script>
 export default {
   name: "App",
@@ -11,8 +10,5 @@ export default {
 <style>
 body {
   text-align: center;
-}
-#app{
-
 }
 </style>

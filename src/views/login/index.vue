@@ -1,5 +1,10 @@
 <template>
-  <div class="login-app">
+  <div
+    class="login-app"
+    v-loading="loginLoading"
+    element-loading-text="授权登录中..."
+    element-loading-spinner="el-icon-loading"
+  >
     <el-container class="login-container">
       <el-form ref="form" :model="form" label-width="40px" class="login-form">
         <h1>GO-IM</h1>
@@ -14,6 +19,7 @@
           <el-row>
             <el-col :span="7">
               <svg
+                @click="weiboLogin"
                 t="1624525865244"
                 class="icon"
                 viewBox="0 0 1024 1024"
@@ -83,26 +89,83 @@
           </el-row>
         </el-form-item>
         <el-form-item class="login-btn">
-          <el-button type="login">登录</el-button>
-          <el-button>注册</el-button>
+          <el-button @click="login" type="login">登录</el-button>
+          <el-button @click="registered">注册</el-button>
         </el-form-item>
       </el-form>
     </el-container>
+    <div class="footer" style="">
+      <p>由latent编码🔧 2021-{{ year }} 「web-im-app📦」</p>
+      <p>
+        <a target="_black" href="https://github.com/pl1998/web-im-app">
+          源码
+        </a>
+      </p>
+      <p>
+        <a
+          href="https://baike.baidu.com/item/MIT%E8%AE%B8%E5%8F%AF%E8%AF%81/6671281?fr=aladdin"
+          target="_black"
+          >基于MIT开源</a
+        >
+      </p>
+    </div>
   </div>
 </template>
 <script>
+// import { mapState } from "vuex";
 export default {
   data() {
     return {
+      loginLoading: false,
       form: {
         name: "",
         password: "",
       },
     };
   },
+  watch: {
+    "this.$store.auth"() {
+      this.$route.push({ path: "/" });
+    },
+  },
+  created() {
+    if (this.$route.query.code) {
+      this.auth(this.$route.query.code);
+    } else {
+    }
+  },
   methods: {
+    login() {
+      this.$notify({
+        title: "提醒⏰",
+        message: "请使用第三方登录",
+        type: "warning",
+      });
+    },
+    registered() {
+      this.$notify({
+        title: "提醒⏰",
+        message: "暂未开放用户注册",
+        type: "warning",
+      });
+    },
+    weiboLogin() {
+      window.location.href =
+        "https://api.weibo.com/oauth2/authorize?client_id=1949419161&redirect_uri=http://127.0.0.1:3002/login";
+      // window.open(
+      //   "https://api.weibo.com/oauth2/authorize?client_id=" +
+      //     import.meta.env.VITE_APP_WB_CLIENT_ID +
+      //     "&redirect_uri=" +
+      //     import.meta.env.VITE_APP_WB_REDIRECT_URL
+      // );
+    },
     onSubmit() {
       console.log("submit!");
+    },
+    auth(code) {
+      this.loginLoading = true;
+      this.$store.dispatch("weiboLogin", { code: code });
+      //http://127.0.0.1:9502/api/WeiBoCallBack 请求该接口
     },
   },
 };
@@ -117,7 +180,7 @@ export default {
   width: 400px;
   height: 350px;
   margin: auto;
-  position: absolute;
+  position: relative;
   top: 0;
   left: 0;
   right: 0;
@@ -158,5 +221,16 @@ export default {
   text-transform: uppercase;
   border-radius: 3px;
 }
-
+.footer {
+   color: #fff;
+  margin: auto;
+  position: relative;
+  top: 30px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.footer a {
+   color: #fff;
+}
 </style>

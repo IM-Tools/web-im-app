@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie';
 import { createRouter, createWebHistory } from 'vue-router'
 
 import Home from "../views/Home.vue";
@@ -14,7 +15,7 @@ const  routerMap = [
     },
     {
         path: '/login',
-        name: 'login',
+        name: 'Login',
         component: Login,
         meta:{
             title:'login',
@@ -28,5 +29,17 @@ const router = createRouter({
     routes: routerMap //`routes: routes` 的缩写
 })
 
+router.beforeEach((to, from, next) => {
+    // 如果用户未能验证身份，则 `next` 会被调用两次
+    console.log(Cookies.get('auth'))
+    if (to.name !== 'Login' && Cookies.get('auth')==undefined){
+        console.log(from)
+        next({ name: 'Login' })
+    }
+    if(to.name=="Login" && Cookies.get('auth')=='true'){
+        next({ name: 'Home' })
+    }
+    next()
+  })
 
 export default router
