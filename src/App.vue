@@ -7,8 +7,7 @@ export default {
   components: {},
 };
 </script>
-<style>
-body {
-  text-align: center;
-}
+<style lang="scss">
+@import "./style/main.scss";
+
 </style>

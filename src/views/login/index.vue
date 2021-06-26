@@ -17,7 +17,7 @@
         <p>第三方登录</p>
         <el-form-item label="">
           <el-row>
-            <el-col :span="7">
+            <el-col :span="8">
               <svg
                 @click="weiboLogin"
                 t="1624525865244"

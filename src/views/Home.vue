@@ -1,14 +1,11 @@
 <template>
   <el-container class="im-container">
-    <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-      <el-menu :default-openeds="['1', '3']"> </el-menu>
-    </el-aside>
-    <el-container>
-      <el-header style="text-align: right; font-size: 12px">
+    <el-aside width="200px">
+      <el-header class="im-user-header">
         <img class="users-img" :src="users.avatar" />
-        <span>{{ users.name }}</span>
+        <span style="color: #fff">{{ users.name }}</span>
         <el-dropdown>
-          <i class="el-icon-setting" style="margin-right: 15px"></i>
+          <i class="el-icon-menu" style="margin-right: 15px"></i>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item>👤个人信息</el-dropdown-item>
@@ -17,9 +14,25 @@
           </template>
         </el-dropdown>
       </el-header>
+      <el-footer></el-footer>
+    </el-aside>
+    <el-container>
+      <el-header class="im-msg-header">
+        {{ users.name }}
+      </el-header>
       <el-main>
-        <el-table :data="tableData"> </el-table>
-        <el-main width="" class="app-msg"></el-main>
+        <el-main id="msgDiv" width="" class="app-msg">
+          <div :key="list.id" v-for="list in msgData">
+            <p v-if="list.left" class="msg-content-left">
+              <img class="img-left" :src="users.avatar" />
+              <span>{{ list.msg }}</span>
+            </p>
+            <p class="msg-content-right">
+              <span>{{ list.msg }}</span>
+              <img class="img-right" :src="users.avatar" />
+            </p>
+          </div>
+        </el-main>
         <el-footer class="app-msg-footer">
           <discord-picker
             input
@@ -72,8 +85,16 @@ export default {
         user_id: 11,
         msg: this.value,
       });
-
-      this.value = "";
+      this.msgData.push({
+        msg: this.value,
+        user_id: 2,
+        left: true,
+      });
+      console.log(this.msgData);
+      setTimeout(() => {
+        var ele = document.getElementById("msgDiv");
+        ele.scrollTop = ele.scrollHeight;
+      }, 500);
     },
     init: function () {
       if (typeof WebSocket === "undefined") {
@@ -112,7 +133,7 @@ export default {
     },
 
     getMessage: function (msg) {
-        alert(222)
+      alert(222);
       console.log(msg);
     },
 
@@ -160,12 +181,131 @@ export default {
   .im-container {
     width: 100%;
     height: 900px;
-    border: 1px solid rgb(26, 2, 2);
   }
+}
+.im-container {
+  margin: 0 auto;
+  width: 60%;
+  height: 800px;
+  //   border: 1px solid rgb(122, 118, 118);
+  .im-user-header {
+    display: flex;
+    align-items: center;
+    line-height: 70px;
+    justify-content: flex-end;
+    text-align: right;
+    font-size: 12px;
+    background-color: #2e3238;
+  }
+  .im-msg-header {
+    display: flex;
+    text-align: center;
+    font-size: 12px;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.el-main {
+  background-color: #fff;
+  border: none;
 }
 .app-msg {
   background-color: #fff;
-  height: 450px;
+  height: 550px;
+
+  .msg-content-left {
+    padding: 5px 0px 5px 0px;
+    align-items: center;
+    display: flex;
+    justify-content: left;
+    img {
+      box-shadow: 0 1px 10px 0 #a3b4bf;
+      height: 25px;
+      width: 25px;
+    }
+    span {
+      max-width: 70%;
+      border-radius: 3px;
+      -moz-border-radius: 3px;
+      -webkit-border-radius: 3px;
+      list-style: none;
+      text-align: left;
+      font-size: 14px;
+      background: #b2e281;
+      text-align: left;
+      margin: 5px 0 0 0;
+      display: inline-block;
+      padding: 8px 10px;
+      margin-top: 0;
+      min-width: 100px;
+      word-break: break-all;
+      margin-left: 15px;
+    }
+    span::before {
+      top: 11px;
+      right: 100%;
+      left: 44px;
+      display: block;
+      float: left;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+      content: " ";
+      border-color: transparent;
+      border-style: solid solid outset;
+      border-width: 8px;
+      border-right-color: #b2e281;
+      margin-left: -26px;
+    }
+  }
+
+  .msg-content-right {
+    padding: 5px 0px 5px 0px;
+    justify-content: flex-end;
+    display: flex;
+    align-items: center;
+    img {
+      box-shadow: 0 1px 10px 0 #a3b4bf;
+      height: 25px;
+      width: 25px;
+    }
+
+    span {
+      max-width: 70%;
+      border-radius: 3px;
+      -moz-border-radius: 3px;
+      -webkit-border-radius: 3px;
+      list-style: none;
+      text-align: left;
+      font-size: 14px;
+      background: #b2e281;
+      text-align: left;
+      margin: 5px 0 0 0;
+      display: inline-block;
+      padding: 8px 10px;
+      margin-top: 0;
+      min-width: 100px;
+      word-break: break-all;
+      margin-right: 10px;
+    }
+    span::before {
+      top: 11px;
+      //   left: 200px;
+      //   right: 440px;
+      display: block;
+      float: right;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+      content: " ";
+      border-color: transparent;
+      border-style: solid solid outset;
+      border-width: 8px;
+      border-left-color: #b2e281;
+      margin-right: -25px;
+    }
+  }
 }
 .el-footer {
   padding: 0px 0px;
@@ -175,25 +315,15 @@ export default {
 .app-msg-footer {
   margin-top: 20px;
 }
-.im-container {
-  margin: 0 auto;
-  width: 60%;
-  height: 700px;
-  border: 1px solid #eee;
-}
+
 .users-img {
-  width: 30px;
-  height: 30px;
+  width: 50px;
+  height: 50px;
   padding: 5px;
   text-align: center;
   align-items: center;
 }
-.el-header {
-  display: flex;
-  align-items: center;
-  line-height: 70px;
-  justify-content: flex-end;
-}
+
 .el-aside {
   background-color: #0000;
 }
@@ -202,5 +332,9 @@ export default {
 }
 .common-layout {
   background-color: aqua;
+}
+.el-aside {
+  background-color: #2e3238;
+  // border: 1px solid #000;
 }
 </style>

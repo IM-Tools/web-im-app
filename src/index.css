@@ -14,7 +14,7 @@ body{
   height: 100%;
   position: fixed;
   width: 100%;
-  background-color: rgb(12, 12, 12);
+  background-color: rgb(109, 104, 104);
 }
 #app .login-btn{
   color: red;
