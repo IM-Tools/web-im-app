@@ -8,6 +8,7 @@ export default createStore({
     auth: Cookies.get('auth') ? true : false,
     users: localStorage.getItem('users') ? JSON.parse(localStorage.getItem('users')) : false,
     token: Cookies.get('token') || undefined,
+    goodslist:[]
   },
   mutations: {
     // updateAuth(state, bool) {
@@ -20,6 +21,10 @@ export default createStore({
     setAuth(state,data){
       state.auth = data.bool;
       Cookies.set('auth',true,{ expires: data.time })
+    },
+    setgoodslist(state,data){
+      state.goodslist = data.bool;
+    
     },
     setUsers(state,data){
       localStorage.setItem('users',JSON.stringify(data))
@@ -55,7 +60,14 @@ export default createStore({
           message: "退出登录成功",
         })
         router.push({path:"/login"})
-      }
+      },
+      getgoodlist({commit},params){
+        authApi.GetGoodData(params)
+        .then((response)=>{
+          const {code,data} = response
+          commit('setgoodslist', data.list)
+      })
+    }
   },
   getters: {
     

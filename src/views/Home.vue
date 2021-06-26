@@ -5,22 +5,35 @@
         <img class="users-img" :src="users.avatar" />
         <span style="color: #fff">{{ users.name }}</span>
         <el-dropdown>
-          <i class="el-icon-menu" style="margin-right: 15px"></i>
+          <i class="el-icon-s-unfold" style="margin-right: 15px"></i>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item>👤个人信息</el-dropdown-item>
-              <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
+              <el-dropdown-item
+                ><i class="el-icon-user"></i>个人信息</el-dropdown-item
+              >
+              <el-dropdown-item @click="dialog = true"
+                ><i class="el-icon-search"></i>添加好友</el-dropdown-item
+              >
+              <el-dropdown-item @click="logout"
+                ><i class="el-icon-unlock"></i>退出登录</el-dropdown-item
+              >
             </el-dropdown-menu>
           </template>
         </el-dropdown>
       </el-header>
-      <el-footer></el-footer>
+      <el-main class="fa-main-users" style="color: #fff">
+        <div class="fa-users">
+          <img :src="users.avatar" />
+          <span>{{ users.name }}</span>
+        </div>
+      </el-main>
+      <el-footer style="color: #fff"></el-footer>
     </el-aside>
     <el-container>
       <el-header class="im-msg-header">
         {{ users.name }}
       </el-header>
-      <el-main>
+      <el-main class="img-msg-main">
         <el-main id="msgDiv" width="" class="app-msg">
           <div :key="list.id" v-for="list in msgData">
             <p v-if="list.left" class="msg-content-left">
@@ -46,6 +59,29 @@
         </el-footer>
       </el-main>
     </el-container>
+    <el-dialog title="搜索好友🔍" v-model="dialog">
+      <el-form :model="form" label-width="100px">
+        <el-form-item label="搜索好友"  >
+          <el-input  v-model="form.name" autocomplete="off"></el-input>
+          <!-- <el-button icon="el-icon-search" circle></el-button> -->
+        </el-form-item>
+      </el-form>
+          <el-table :data="tableData" style="width: 100%">
+          <el-table-column prop="name" label="名称" width="100">
+          </el-table-column>
+           <el-table-column prop="avatar" label="头像" width="100">
+               <template #default="scope"> <img style="height:30px;width:30px" :src="scope.row.avatar"></template>
+          </el-table-column>
+          <el-table-column prop="address" label="状态">
+            <template #default="scope">
+           <i v-if="scope.row.status">在线</i>
+            <i v-else>离线</i>
+          </el-table-column>
+          <el-table-column prop="name" label="操作">
+   <el-button type="primary" size="mini" icon="el-icon-plus"></el-button>
+          </el-table-column>
+        </el-table>
+    </el-dialog>
   </el-container>
 </template>
 <script>
@@ -57,6 +93,26 @@ export default {
   components: { DiscordPicker },
   data() {
     return {
+      tableData: [
+        {
+          name: "Summer",
+          avatar:
+            "https://cdn.learnku.com/uploads/avatars/32858_1624608687.jpeg!/both/100x100",
+          status: true,
+        },
+        {
+          name: "MArtian",
+          avatar:
+            "https://cdn.learnku.com/uploads/avatars/56030_1591034461.png!/both/100x100",
+          status: false,
+        },
+        {
+          name: "小黑猫",
+          avatar:
+            "https://cdn.learnku.com/uploads/avatars/1_1530614766.png!/both/100x100",
+          status: true,
+        },
+      ],
       ws: "ws://127.0.0.1:9502/serve/ws-con",
       socket: "",
       form: {
@@ -64,26 +120,23 @@ export default {
       },
       text: "",
       value: "",
-      msgData: [
-        {
-          user_id: 2,
-          msg: "第一条",
-          left: true,
-        },
-      ],
+      msgData: [],
+      dialog: false,
     };
   },
   computed: {
-    ...mapState(["auth", "users"]),
+    ...mapState(["auth", "users","goodslist"]),
   },
   created() {
     this.init();
+    this.$store.dispatch("getgoodlist",{name:""})
   },
   methods: {
     sendMsg() {
       this.send({
         user_id: 11,
         msg: this.value,
+        left: false,
       });
       this.msgData.push({
         msg: this.value,
@@ -136,17 +189,6 @@ export default {
       alert(222);
       console.log(msg);
     },
-
-    // getMessage: function (msg) {
-    //     console.log(msg)
-    // //   this.msgData.push({
-    // //       msg:msg.data,
-    // //       user_id:2,
-    // //       left:true
-    // //   });
-    // //      console.log(this.msg.data);
-    // //   console.log(this.msgData);
-    // },
     send: function (params = { user_id: 1, msg: "" }) {
       this.socket.send(JSON.stringify(params));
     },
@@ -187,6 +229,31 @@ export default {
   margin: 0 auto;
   width: 60%;
   height: 800px;
+
+  .fa-users {
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    img {
+      width: 30px;
+      height: 30px;
+      border-radius: 5px;
+    }
+    span {
+      font-size: 12px;
+      padding-left: 10px;
+    }
+  }
+  .fa-users:hover {
+    background-color: #454b55;
+  }
+  .fa-main-users {
+    margin-top: 50px;
+    padding: 10px;
+  }
+
   //   border: 1px solid rgb(122, 118, 118);
   .im-user-header {
     display: flex;
@@ -204,14 +271,14 @@ export default {
     justify-content: center;
     align-items: center;
   }
+  .img-msg-main {
+    background-color: rgb(236 235 235);
+    border: none;
+  }
 }
 
-.el-main {
-  background-color: #fff;
-  border: none;
-}
 .app-msg {
-  background-color: #fff;
+  background-color: rgb(236 235 235);
   height: 550px;
 
   .msg-content-left {
@@ -221,8 +288,8 @@ export default {
     justify-content: left;
     img {
       box-shadow: 0 1px 10px 0 #a3b4bf;
-      height: 25px;
-      width: 25px;
+      height: 30px;
+      width: 30px;
     }
     span {
       max-width: 70%;
@@ -232,13 +299,13 @@ export default {
       list-style: none;
       text-align: left;
       font-size: 14px;
-      background: #b2e281;
+      background: #fff;
       text-align: left;
       margin: 5px 0 0 0;
       display: inline-block;
       padding: 8px 10px;
       margin-top: 0;
-      min-width: 100px;
+
       word-break: break-all;
       margin-left: 15px;
     }
@@ -255,7 +322,7 @@ export default {
       border-color: transparent;
       border-style: solid solid outset;
       border-width: 8px;
-      border-right-color: #b2e281;
+      border-right-color: #fff;
       margin-left: -26px;
     }
   }
@@ -267,10 +334,9 @@ export default {
     align-items: center;
     img {
       box-shadow: 0 1px 10px 0 #a3b4bf;
-      height: 25px;
-      width: 25px;
+      height: 30px;
+      width: 30px;
     }
-
     span {
       max-width: 70%;
       border-radius: 3px;
@@ -285,7 +351,7 @@ export default {
       display: inline-block;
       padding: 8px 10px;
       margin-top: 0;
-      min-width: 100px;
+
       word-break: break-all;
       margin-right: 10px;
     }
