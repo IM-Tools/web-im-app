@@ -21,6 +21,6 @@ export default {
      * @param {*} token
      */
     GetGoodData:function(params){
-        return get('/usersList',params)
+        return get('/UsersList',params)
     }
 }

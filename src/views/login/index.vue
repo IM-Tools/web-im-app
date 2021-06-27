@@ -17,7 +17,7 @@
         <p>第三方登录</p>
         <el-form-item label="">
           <el-row>
-            <el-col :span="8">
+            <el-col class="item-center" :span="8">
               <svg
                 @click="weiboLogin"
                 t="1624525865244"
@@ -51,7 +51,7 @@
                 ></path>
               </svg>
             </el-col>
-            <el-col :span="8">
+            <el-col class="item-center" :span="8">
               <svg
                 t="1624525783975"
                 class="icon"
@@ -68,7 +68,7 @@
                 ></path>
               </svg>
             </el-col>
-            <el-col :span="8">
+            <el-col class="item-center" :span="8">
               <svg
                 t="1624525807281"
                 class="icon"
@@ -170,14 +170,13 @@ export default {
   },
 };
 </script>
-<style scoped>
+<style lang="scss" scoped>
+
 .login-app {
   background-color: aliceblue;
-  text-align: center; /*让div内部文字居中*/
-  /* background-color: #fff; */
-  /* background: url("https://res.wx.qq.com/a/wx_fed/webwx/res/static/img/2zrdI1g.jpg"); */
+  text-align: center; 
   border-radius: 20px;
-  width: 400px;
+  width:400px;
   height: 350px;
   margin: auto;
   position: relative;
@@ -186,6 +185,13 @@ export default {
   right: 0;
   bottom: 0;
 }
+@media screen and (max-width: 750px) {
+  .login-app {
+    width: 90%;
+  }
+}
+
+
 .el-container {
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
@@ -196,8 +202,7 @@ export default {
   min-width: 0px;
   justify-content: center;
 }
-.login-container {
-}
+
 .login-form {
   width: 80%;
 }
@@ -222,7 +227,7 @@ export default {
   border-radius: 3px;
 }
 .footer {
-   color: #fff;
+  color: #fff;
   margin: auto;
   position: relative;
   top: 30px;
@@ -231,6 +236,6 @@ export default {
   bottom: 0;
 }
 .footer a {
-   color: #fff;
+  color: #fff;
 }
 </style>

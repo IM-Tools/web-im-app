@@ -11,19 +11,12 @@ export default createStore({
     goodslist:[]
   },
   mutations: {
-    // updateAuth(state, bool) {
-    //   state.auth = bool;
-    // },
-    // updateUsers(state, data) {
-    //   state.users = data;
-    //   localStorage.setItem('users',JSON.stringify(data))
-    // }
     setAuth(state,data){
       state.auth = data.bool;
       Cookies.set('auth',true,{ expires: data.time })
     },
-    setgoodslist(state,data){
-      state.goodslist = data.bool;
+    setGoodslist(state,data){
+      state.goodslist = data;
     
     },
     setUsers(state,data){
@@ -47,7 +40,7 @@ export default createStore({
               })
               router.push({path: '/'})
             }else{
-
+              
             }
           })
       },
@@ -65,7 +58,8 @@ export default createStore({
         authApi.GetGoodData(params)
         .then((response)=>{
           const {code,data} = response
-          commit('setgoodslist', data.list)
+         
+          commit('setGoodslist', data.list)
       })
     }
   },

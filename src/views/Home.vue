@@ -22,22 +22,22 @@
         </el-dropdown>
       </el-header>
       <el-main class="fa-main-users" style="color: #fff">
-        <div class="fa-users">
-          <img :src="users.avatar" />
-          <span>{{ users.name }}</span>
+        <div class="fa-users" v-for="list in goodslist" :key="list.id" @click="SelectUser(list)">
+          <img :src="list.avatar" />
+          <span>{{ list.name }}</span>
         </div>
       </el-main>
       <el-footer style="color: #fff"></el-footer>
     </el-aside>
     <el-container>
       <el-header class="im-msg-header">
-        {{ users.name }}
+        {{ selectUser.name ? selectUser.name : "未选择好友" }}
       </el-header>
       <el-main class="img-msg-main">
         <el-main id="msgDiv" width="" class="app-msg">
           <div :key="list.id" v-for="list in msgData">
             <p v-if="list.left" class="msg-content-left">
-              <img class="img-left" :src="users.avatar" />
+              <img class="img-left" :src="selectUser.avatar" />
               <span>{{ list.msg }}</span>
             </p>
             <p class="msg-content-right">
@@ -122,6 +122,7 @@ export default {
       value: "",
       msgData: [],
       dialog: false,
+      selectUser:[]
     };
   },
   computed: {
@@ -129,15 +130,29 @@ export default {
   },
   created() {
     this.init();
-    this.$store.dispatch("getgoodlist",{name:""})
+    this.$store.dispatch("getgoodlist")
   },
   methods: {
+    SelectUser(user){
+        this.selectUser=user
+    },  
     sendMsg() {
+   
+        if(!this.selectUser){
+        this.$notify({
+          title: "提醒",
+          message: "未选择用户",
+          type: "error",
+        });
+            return 
+        }
       this.send({
-        user_id: 11,
+        user_id: this.selectUser.id,
         msg: this.value,
         left: false,
+         avatar: this.selectUser.name,
       });
+       
       this.msgData.push({
         msg: this.value,
         user_id: 2,
@@ -155,6 +170,7 @@ export default {
           title: "提醒",
           message: "您的浏览器不支持socket",
           type: "error",
+          
         });
       } else {
         // 实例化socket
@@ -219,16 +235,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@media (max-width: 750px) {
-  .im-container {
-    width: 100%;
-    height: 900px;
-  }
-}
 .im-container {
   margin: 0 auto;
   width: 60%;
-  height: 800px;
+  height: 70%;
 
   .fa-users {
     padding: 5px;
@@ -277,9 +287,17 @@ export default {
   }
 }
 
+@media (max-width: 750px) {
+  .im-container {
+    width: 100%;
+    height: 900px;
+  }
+}
+
+
 .app-msg {
   background-color: rgb(236 235 235);
-  height: 550px;
+  height: 80%;
 
   .msg-content-left {
     padding: 5px 0px 5px 0px;
