@@ -1,5 +1,5 @@
 {
-  "name": "GOIM",
+  "name": "vue-im-app",
   "version": "0.0.0",
   "scripts": {
     "serve": "vite serve --mode development",

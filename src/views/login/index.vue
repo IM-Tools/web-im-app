@@ -7,7 +7,10 @@
   >
     <el-container class="login-container">
       <el-form ref="form" :model="form" label-width="40px" class="login-form">
-        <h1>GO-IM</h1>
+        <el-header>
+          <h1>IM</h1>
+          <img src="" />
+        </el-header>
         <el-form-item label="账号">
           <el-input type="text" v-model="form.name"></el-input>
         </el-form-item>
@@ -171,12 +174,11 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-
 .login-app {
   background-color: aliceblue;
-  text-align: center; 
+  text-align: center;
   border-radius: 20px;
-  width:400px;
+  width: 400px;
   height: 350px;
   margin: auto;
   position: relative;
@@ -190,7 +192,6 @@ export default {
     width: 90%;
   }
 }
-
 
 .el-container {
   -webkit-box-orient: horizontal;

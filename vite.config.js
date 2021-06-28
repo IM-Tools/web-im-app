@@ -12,8 +12,8 @@ module.exports = {
   hostname: '127.0.0.1', // 默认是 localhost
   port: '3002', // 默认是 3000 端口
   open: true, // 浏览器自动打开
-  https: false, // 是否开启 https
-  ssr: false, // 服务端渲染
+  https: false, // 是否开启 https/*  */
+  ssr: true, // 服务端渲染
   optimizeDeps: {
     include: [ "axios"]
   },
