@@ -14,6 +14,8 @@
 ![im-login](/public/WechatIMG385.png)
   * 主页面
 ![im](/public/WechatIMG384.png)
+  * 表情
+![emioj](/public/WechatIMG386.png)
 
 #### 鸣谢
   * [element-plus](https://element-plus.org/#/zh-CN)
