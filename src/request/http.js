@@ -5,6 +5,7 @@ import { ElNotification } from 'element-plus'
 import store from '../store/index';
 
 axios.defaults.baseURL = import.meta.env.VITE_APP_BASE_API
+// axios.defaults.baseURL = '/api'
 axios.defaults.timeout = 10000
 // 请求拦截器
 axios.interceptors.request.use(
