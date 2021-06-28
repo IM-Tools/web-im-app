@@ -249,7 +249,7 @@ export default {
   margin: 0 auto;
   width: 60%;
   max-width: 80%;
-  height:80%;
+  height:90%;
   .fa-users {
     padding: 10px;
     display: flex;
