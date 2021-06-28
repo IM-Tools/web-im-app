@@ -5,17 +5,22 @@ body {
     width: 100%;
     // background-color: rgb(109, 104, 104);
     /*让div内部文字居中*/
-    background: url("https://res.wx.qq.com/a/wx_fed/webwx/res/static/img/2zrdI1g.jpg");
+    background: url("https://res.wx.qq.com/a/wx_fed/webwx/res/static/img/2zrdI1g.jpg")no-repeat 100%;
+    // background-size: cover;
+    // cursor:pointer;
+    background-size: 100% 100%;
+    background-attachment: fixed;
 }
 
 #app {
+    top:  0px;
+    left: 0px;
     font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
     margin-top: 60px;
-
     .login-btn {
         color: red;
 
@@ -28,9 +33,13 @@ body {
     .el-container .el-aside {
         margin-left: 0px !important;
     }
+
+    height: 100%;
+    position: fixed;
+    width: 100%;
 }
 
-@media  screen and (max-width: 750px) {
+@media screen and (max-width: 1000px) {
     #app {
         font-family: Avenir, Helvetica, Arial, sans-serif;
         -webkit-font-smoothing: antialiased;
@@ -40,17 +49,17 @@ body {
         margin-top: 0px;
         .login-btn {
             color: red;
-    
+
             .el-form-item__content {
                 background-color: #0000;
                 margin-left: 0px !important;
             }
         }
-    
         .el-container .el-aside {
             margin-left: 0px !important;
         }
     }
+
 }
 
 //重写聊天组件样式

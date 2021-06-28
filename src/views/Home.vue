@@ -1,11 +1,11 @@
 <template>
   <el-container class="im-container">
-    <el-aside width="200px">
+    <el-aside width="280px">
       <el-header class="im-user-header">
         <img class="users-img" :src="users.avatar" />
-        <span style="color: #fff">{{ users.name }}</span>
+        <span style="color: #fff;margin-left: 10px;font-size: 18px;">{{ users.name }}</span>
         <el-dropdown>
-          <i class="el-icon-s-unfold" style="margin-right: 15px"></i>
+          <i class="el-icon-s-unfold" style="margin-left: 15px;font-size:20px;"></i>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item
@@ -22,12 +22,13 @@
         </el-dropdown>
       </el-header>
       <el-main class="fa-main-users" style="color: #fff">
+      <el-main>
         <div class="fa-users" v-for="list in goodslist" :key="list.id" @click="SelectUser(list)">
           <img :src="list.avatar" />
           <span>{{ list.name }}</span>
         </div>
+           </el-main>
       </el-main>
-      <el-footer style="color: #fff"></el-footer>
     </el-aside>
     <el-container>
       <el-header class="im-msg-header">
@@ -35,7 +36,8 @@
       </el-header>
       <el-main class="img-msg-main">
         <el-main id="msgDiv" width="" class="app-msg">
-          <div :key="list.id" v-for="list in msgData">
+          <span v-if="!toUser" style="font-size: 12px;">请选择聊天</span>
+          <div v-else :key="list.id" v-for="list in msgData">
             <p v-if="list.left" class="msg-content-left">
               <img class="img-left" :src="selectUser.avatar" />
               <span>{{ list.msg }}</span>
@@ -49,21 +51,22 @@
         <el-footer class="app-msg-footer">
           <discord-picker
             input
-            :value="value"
+           :value="value"
             @keyup.enter="sendMsg"
             gif-format="md"
             @update:value="value = $event"
             @emoji="setEmoji"
+            :placeholder="placeholder"
             @gif="setGif"
           />
         </el-footer>
       </el-main>
     </el-container>
-    <el-dialog title="搜索好友🔍" v-model="dialog">
+    <!-- <el-dialog title="搜索好友🔍" v-model="dialog">
       <el-form :model="form" label-width="100px">
         <el-form-item label="搜索好友"  >
           <el-input  v-model="form.name" autocomplete="off"></el-input>
-          <!-- <el-button icon="el-icon-search" circle></el-button> -->
+         
         </el-form-item>
       </el-form>
           <el-table :data="tableData" style="width: 100%">
@@ -81,7 +84,7 @@
    <el-button type="primary" size="mini" icon="el-icon-plus"></el-button>
           </el-table-column>
         </el-table>
-    </el-dialog>
+    </el-dialog> -->
   </el-container>
 </template>
 <script>
@@ -93,6 +96,7 @@ export default {
   components: { DiscordPicker },
   data() {
     return {
+      placeholder:"开始聊天～",
       tableData: [
         {
           name: "Summer",
@@ -122,43 +126,44 @@ export default {
       value: "",
       msgData: [],
       dialog: false,
-      selectUser:[]
+      selectUser: [],
+      toUser:false,
     };
   },
   computed: {
-    ...mapState(["auth", "users","goodslist"]),
+    ...mapState(["auth", "users", "goodslist"]),
   },
   created() {
     this.init();
-    this.$store.dispatch("getgoodlist")
+    this.$store.dispatch("getgoodlist");
   },
   methods: {
-    SelectUser(user){
-        this.selectUser=user
-    },  
+    SelectUser(user) {
+      this.selectUser = user;
+      this.toUser=true
+    },
     sendMsg() {
-   
-        if(!this.selectUser){
+      if (!this.toUser) {
         this.$notify({
           title: "提醒",
-          message: "未选择用户",
+          message: "未选择聊天对象",
           type: "error",
         });
-            return 
-        }
+        return;
+      }
       this.send({
         user_id: this.selectUser.id,
         msg: this.value,
         left: false,
-         avatar: this.selectUser.name,
+        avatar: this.selectUser.name,
       });
-       
+
       this.msgData.push({
         msg: this.value,
         user_id: 2,
         left: true,
       });
-      console.log(this.msgData);
+      this.value=""
       setTimeout(() => {
         var ele = document.getElementById("msgDiv");
         ele.scrollTop = ele.scrollHeight;
@@ -170,7 +175,6 @@ export default {
           title: "提醒",
           message: "您的浏览器不支持socket",
           type: "error",
-          
         });
       } else {
         // 实例化socket
@@ -229,27 +233,33 @@ export default {
       }).then(() => {
         this.$store.dispatch("logoutUser");
       });
-    },
+    }
   },
+  mounted(){
+    
+  }
 };
 </script>
 
 <style lang="scss" scoped>
+.el-main{
+  padding: 0px;
+}
 .im-container {
   margin: 0 auto;
-  width: 60%;
-  height: 70%;
-
+  max-width: 1000px;
+  min-width: 800px;
+     height: 800px;
   .fa-users {
-    padding: 5px;
+    padding: 10px;
     display: flex;
+    height: 64px;
     align-items: center;
     justify-content: flex-start;
-
     img {
-      width: 30px;
-      height: 30px;
-      border-radius: 5px;
+      width: 40px;
+      height: 40px;
+      border-radius: 3px;
     }
     span {
       font-size: 12px;
@@ -260,21 +270,21 @@ export default {
     background-color: #454b55;
   }
   .fa-main-users {
-    margin-top: 50px;
+    margin-top: 30px;
     padding: 10px;
   }
-
   //   border: 1px solid rgb(122, 118, 118);
   .im-user-header {
     display: flex;
     align-items: center;
     line-height: 70px;
-    justify-content: flex-end;
+    justify-content: flex-start;
     text-align: right;
     font-size: 12px;
     background-color: #2e3238;
   }
   .im-msg-header {
+    border-bottom: 1px solid #d6d6d6;
     display: flex;
     text-align: center;
     font-size: 12px;
@@ -287,17 +297,17 @@ export default {
   }
 }
 
-@media (max-width: 750px) {
+@media (max-width: 1000px) {
   .im-container {
     width: 100%;
-    height: 900px;
+    height: 100%;
   }
 }
-
 
 .app-msg {
   background-color: rgb(236 235 235);
   height: 80%;
+  padding: 10px;
 
   .msg-content-left {
     padding: 5px 0px 5px 0px;
@@ -306,8 +316,8 @@ export default {
     justify-content: left;
     img {
       box-shadow: 0 1px 10px 0 #a3b4bf;
-      height: 30px;
-      width: 30px;
+      height: 40px;
+      width: 40px;
     }
     span {
       max-width: 70%;
@@ -352,8 +362,8 @@ export default {
     align-items: center;
     img {
       box-shadow: 0 1px 10px 0 #a3b4bf;
-      height: 30px;
-      width: 30px;
+      height: 40px;
+      width: 40px;
     }
     span {
       max-width: 70%;
@@ -399,15 +409,12 @@ export default {
 .app-msg-footer {
   margin-top: 20px;
 }
-
 .users-img {
-  width: 50px;
-  height: 50px;
-  padding: 5px;
+  width: 40px;
+  height: 40px;
   text-align: center;
   align-items: center;
 }
-
 .el-aside {
   background-color: #0000;
 }
