@@ -20,20 +20,17 @@ body {
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
-    margin-top: 60px;
+    margin-top: 40px;
     .login-btn {
         color: red;
-
         .el-form-item__content {
             background-color: #0000;
             margin-left: 0px !important;
         }
     }
-
     .el-container .el-aside {
         margin-left: 0px !important;
     }
-
     height: 100%;
     position: fixed;
     width: 100%;

@@ -3,9 +3,14 @@
     <el-aside width="280px">
       <el-header class="im-user-header">
         <img class="users-img" :src="users.avatar" />
-        <span style="color: #fff;margin-left: 10px;font-size: 18px;">{{ users.name }}</span>
+        <span style="color: #fff; margin-left: 10px; font-size: 18px">{{
+          users.name
+        }}</span>
         <el-dropdown>
-          <i class="el-icon-s-unfold" style="margin-left: 15px;font-size:20px;"></i>
+          <i
+            class="el-icon-s-unfold"
+            style="margin-left: 15px; font-size: 20px"
+          ></i>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item
@@ -22,12 +27,17 @@
         </el-dropdown>
       </el-header>
       <el-main class="fa-main-users" style="color: #fff">
-      <el-main>
-        <div class="fa-users" v-for="list in goodslist" :key="list.id" @click="SelectUser(list)">
-          <img :src="list.avatar" />
-          <span>{{ list.name }}</span>
-        </div>
-           </el-main>
+        <el-main>
+          <div
+            class="fa-users"
+            v-for="list in goodslist"
+            :key="list.id"
+            @click="SelectUser(list)"
+          >
+            <img :src="list.avatar" />
+            <span>{{ list.name }}</span>
+          </div>
+        </el-main>
       </el-main>
     </el-aside>
     <el-container>
@@ -36,7 +46,7 @@
       </el-header>
       <el-main class="img-msg-main">
         <el-main id="msgDiv" width="" class="app-msg">
-          <span v-if="!toUser" style="font-size: 12px;">请选择聊天</span>
+          <span v-if="!toUser" style="font-size: 12px">请选择聊天</span>
           <div v-else :key="list.id" v-for="list in msgData">
             <p v-if="list.left" class="msg-content-left">
               <img class="img-left" :src="selectUser.avatar" />
@@ -51,7 +61,7 @@
         <el-footer class="app-msg-footer">
           <discord-picker
             input
-           :value="value"
+            :value="value"
             @keyup.enter="sendMsg"
             gif-format="md"
             @update:value="value = $event"
@@ -96,7 +106,7 @@ export default {
   components: { DiscordPicker },
   data() {
     return {
-      placeholder:"开始聊天～",
+      placeholder: "开始聊天～",
       tableData: [
         {
           name: "Summer",
@@ -127,7 +137,7 @@ export default {
       msgData: [],
       dialog: false,
       selectUser: [],
-      toUser:false,
+      toUser: false,
     };
   },
   computed: {
@@ -140,7 +150,7 @@ export default {
   methods: {
     SelectUser(user) {
       this.selectUser = user;
-      this.toUser=true
+      this.toUser = true;
     },
     sendMsg() {
       if (!this.toUser) {
@@ -152,18 +162,14 @@ export default {
         return;
       }
       this.send({
-        user_id: this.selectUser.id,
+        user_id: this.users.id,
         msg: this.value,
         left: false,
-        avatar: this.selectUser.name,
+        send_id:this.selectUser.id,
+        avatar: this.users.avatar,
       });
 
-      this.msgData.push({
-        msg: this.value,
-        user_id: 2,
-        left: true,
-      });
-      this.value=""
+      this.value = "";
       setTimeout(() => {
         var ele = document.getElementById("msgDiv");
         ele.scrollTop = ele.scrollHeight;
@@ -198,16 +204,18 @@ export default {
         }
       }
     },
-    open: function () {
+    open: function (msg) {
+      console.log(msg);
       console.log("socket连接成功");
     },
     error: function () {
       console.log("连接错误");
     },
-
     getMessage: function (msg) {
-      alert(222);
-      console.log(msg);
+      let data =JSON.parse(msg.data)
+      console.log(data)
+      this.msgData.push(data);
+      console.log(this.msgData);
     },
     send: function (params = { user_id: 1, msg: "" }) {
       this.socket.send(JSON.stringify(params));
@@ -233,23 +241,20 @@ export default {
       }).then(() => {
         this.$store.dispatch("logoutUser");
       });
-    }
+    },
   },
-  mounted(){
-    
-  }
+  mounted() {},
 };
 </script>
 
 <style lang="scss" scoped>
-.el-main{
+.el-main {
   padding: 0px;
 }
 .im-container {
   margin: 0 auto;
   width: 60%;
-  max-width: 80%;
-  height:90%;
+  height: 90%;
   .fa-users {
     padding: 10px;
     display: flex;
@@ -294,6 +299,13 @@ export default {
   .img-msg-main {
     background-color: rgb(236 235 235);
     border: none;
+  }
+}
+
+@media (max-width: 1400px) {
+  .im-container {
+    width: 80%;
+    height: 90%;
   }
 }
 
