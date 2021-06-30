@@ -48,11 +48,11 @@
         <el-main id="msgDiv" width="" class="app-msg">
           <span v-if="!toUser" style="font-size: 12px">请选择聊天</span>
           <div v-else :key="list.id" v-for="list in msgData">
-            <p v-if="list.left" class="msg-content-left">
+            <p v-if="list.status" class="msg-content-left">
               <img class="img-left" :src="selectUser.avatar" />
               <span>{{ list.msg }}</span>
             </p>
-            <p class="msg-content-right">
+            <p v-else class="msg-content-right">
               <span>{{ list.msg }}</span>
               <img class="img-right" :src="users.avatar" />
             </p>
@@ -134,23 +134,30 @@ export default {
       },
       text: "",
       value: "",
-      msgData: [],
       dialog: false,
       selectUser: [],
       toUser: false,
     };
   },
   computed: {
-    ...mapState(["auth", "users", "goodslist"]),
+    ...mapState(["auth", "users", "goodslist","msgData"]),
   },
   created() {
     this.init();
     this.$store.dispatch("getgoodlist");
   },
   methods: {
+    getMsgList(params){
+      if(this.toUser){
+        console.log("请求好友列表")
+         console.log(params)
+        this.$store.dispatch("getMsgList",params)
+      }
+    },
     SelectUser(user) {
       this.selectUser = user;
       this.toUser = true;
+      this.getMsgList({to_id:user.id})
     },
     sendMsg() {
       if (!this.toUser) {
@@ -162,11 +169,10 @@ export default {
         return;
       }
       this.send({
-        user_id: this.users.id,
+        from_id: this.users.id,
         msg: this.value,
         left: false,
-        send_id:this.selectUser.id,
-        avatar: this.users.avatar,
+        to_id:this.selectUser.id
       });
 
       this.value = "";

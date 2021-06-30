@@ -15,12 +15,17 @@ export default {
      WeiBoCallBack:function(params){
         return get('/WeiBoCallBack',params)
     },
-
     /**
      * 好友列表
      * @param {*} token
      */
     GetGoodData:function(params){
         return get('/UsersList',params)
+    },
+    /**
+     * 
+     */
+    GetMsgList:function(params){
+        return get('/InformationHistory',params)
     }
 }
