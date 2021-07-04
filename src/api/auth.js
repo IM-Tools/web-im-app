@@ -1,31 +1,17 @@
-import {get} from '../request/http'
+import request from '/@/utils/request';
 
-export default {
-    /**
-     * 获取用户信息
-     * @param {*} data
-     */
-    me:function(){
-        return get('/me')
-    },
-    /**
-     * 微博登录
-     * @param {*} token
-     */
-     WeiBoCallBack:function(params){
-        return get('/WeiBoCallBack',params)
-    },
-    /**
-     * 好友列表
-     * @param {*} token
-     */
-    GetGoodData:function(params){
-        return get('/UsersList',params)
-    },
-    /**
-     * 
-     */
-    GetMsgList:function(params){
-        return get('/InformationHistory',params)
-    }
+export function me(query) {
+    return request({
+        url: '/me',
+        method: 'get',
+        query
+    });
+}
+
+export function login(params) {
+    return request({
+        url: '/login',
+        method: 'post',
+        data: params
+    });
 }

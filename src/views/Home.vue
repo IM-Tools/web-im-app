@@ -1,78 +1,53 @@
 <template>
-  <el-container class="im-container">
-    <el-aside width="280px">
-      <el-header class="im-user-header">
-        <img class="users-img" :src="users.avatar" />
-        <span style="color: #fff; margin-left: 10px; font-size: 18px">{{
-          users.name
-        }}</span>
-        <el-dropdown>
-          <i
-            class="el-icon-s-unfold"
-            style="margin-left: 15px; font-size: 20px"
-          ></i>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item
-                ><i class="el-icon-user"></i>个人信息</el-dropdown-item
-              >
-              <el-dropdown-item @click="dialog = true"
-                ><i class="el-icon-search"></i>添加好友</el-dropdown-item
-              >
-              <el-dropdown-item @click="logout"
-                ><i class="el-icon-unlock"></i>退出登录</el-dropdown-item
-              >
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </el-header>
-      <el-main class="fa-main-users" style="color: #fff">
-        <el-main>
-          <div
-            class="fa-users"
-            v-for="list in goodslist"
-            :key="list.id"
-            @click="SelectUser(list)"
-          >
-            <img :src="list.avatar" />
-            <span>{{ list.name }}</span>
-          </div>
-        </el-main>
-      </el-main>
-    </el-aside>
-    <el-container>
-      <el-header class="im-msg-header">
-        {{ selectUser.name ? selectUser.name : "未选择好友" }}
-      </el-header>
-      <el-main class="img-msg-main">
-        <el-main id="msgDiv" width="" class="app-msg">
-          <span v-if="!toUser" style="font-size: 12px">请选择聊天</span>
-          <div v-else :key="list.id" v-for="list in msgData">
-            <p v-if="list.status" class="msg-content-left">
-              <img class="img-left" :src="selectUser.avatar" />
-              <span>{{ list.msg }}</span>
-            </p>
-            <p v-else class="msg-content-right">
-              <span>{{ list.msg }}</span>
-              <img class="img-right" :src="users.avatar" />
-            </p>
-          </div>
-        </el-main>
-        <el-footer class="app-msg-footer">
-          <discord-picker
-            input
-            :value="value"
-            @keyup.enter="sendMsg"
-            gif-format="md"
-            @update:value="value = $event"
-            @emoji="setEmoji"
-            :placeholder="placeholder"
-            @gif="setGif"
-          />
-        </el-footer>
-      </el-main>
-    </el-container>
-    <!-- <el-dialog title="搜索好友🔍" v-model="dialog">
+    <el-container class="im-container">
+        <el-aside width="280px">
+            <el-header class="im-user-header">
+                <img class="users-img" :src="users.avatar" />
+                <span style="color: #fff; margin-left: 10px; font-size: 18px">{{ users.name }}</span>
+                <el-dropdown>
+                    <i class="el-icon-s-unfold" style="margin-left: 15px; font-size: 20px"></i>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item><i class="el-icon-user"></i>个人信息</el-dropdown-item>
+                            <el-dropdown-item @click="dialog = true"><i class="el-icon-search"></i>添加好友</el-dropdown-item>
+                            <el-dropdown-item @click="logout"><i class="el-icon-unlock"></i>退出登录</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
+            </el-header>
+            <el-main class="fa-main-users" style="color: #fff">
+                <el-main>
+                    <div class="fa-users" v-for="list in goodslist" :key="list.id" @click="SelectUser(list)">
+                        <img :src="list.avatar" />
+                        <span>{{ list.name }}</span>
+                    </div>
+                </el-main>
+            </el-main>
+        </el-aside>
+        <el-container>
+            <el-header class="im-msg-header">
+                {{ selectUser.name ? selectUser.name : '未选择好友' }}
+            </el-header>
+            <el-main class="img-msg-main">
+                <el-main id="msgDiv" width="" class="app-msg">
+                    <span v-if="!toUser" style="font-size: 12px">请选择聊天</span>
+                    <div v-else :key="list.id" v-for="list in msgData">
+                        <p v-if="list.status" class="msg-content-left">
+                            <img class="img-left" :src="selectUser.avatar" />
+                            <span>{{ list.msg }}</span>
+                        </p>
+                        <p v-else class="msg-content-right">
+                            <span>{{ list.msg }}</span>
+                            <img class="img-right" :src="users.avatar" />
+                        </p>
+                    </div>
+                </el-main>
+                <el-footer class="app-msg-footer">
+                    <discord-picker input :value="value" @keyup.enter="sendMsg" gif-format="md" @update:value="value = $event" @emoji="setEmoji" :placeholder="placeholder" @gif="setGif" />
+                </el-footer>
+            </el-main>
+        </el-container>
+        <!-- <el-dialog title="搜索好友🔍" v-model="dialog">
       <el-form :model="form" label-width="100px">
         <el-form-item label="搜索好友"  >
           <el-input  v-model="form.name" autocomplete="off"></el-input>
@@ -95,355 +70,350 @@
           </el-table-column>
         </el-table>
     </el-dialog> -->
-  </el-container>
+    </el-container>
 </template>
 <script>
-import { mapState } from "vuex";
-import DiscordPicker from "vue3-discordpicker";
-import Cookies from "js-cookie";
+import { mapState } from 'vuex';
+import DiscordPicker from 'vue3-discordpicker';
+import Cookies from 'js-cookie';
 
 export default {
-  components: { DiscordPicker },
-  data() {
-    return {
-      placeholder: "开始聊天～",
-      tableData: [
-        {
-          name: "Summer",
-          avatar:
-            "https://cdn.learnku.com/uploads/avatars/32858_1624608687.jpeg!/both/100x100",
-          status: true,
-        },
-        {
-          name: "MArtian",
-          avatar:
-            "https://cdn.learnku.com/uploads/avatars/56030_1591034461.png!/both/100x100",
-          status: false,
-        },
-        {
-          name: "小黑猫",
-          avatar:
-            "https://cdn.learnku.com/uploads/avatars/1_1530614766.png!/both/100x100",
-          status: true,
-        },
-      ],
-      ws: "ws://127.0.0.1:9502/serve/ws-con",
-      socket: "",
-      form: {
-        comments: "",
-      },
-      text: "",
-      value: "",
-      dialog: false,
-      selectUser: [],
-      toUser: false,
-    };
-  },
-  computed: {
-    ...mapState(["auth", "users", "goodslist","msgData"]),
-  },
-  created() {
-    this.init();
-    this.$store.dispatch("getgoodlist");
-  },
-  methods: {
-    getMsgList(params){
-      if(this.toUser){
-        console.log("请求好友列表")
-         console.log(params)
-        this.$store.dispatch("getMsgList",params)
-      }
+    components: { DiscordPicker },
+    data() {
+        return {
+            placeholder: '开始聊天～',
+            tableData: [
+                {
+                    name: 'Summer',
+                    avatar: 'https://cdn.learnku.com/uploads/avatars/32858_1624608687.jpeg!/both/100x100',
+                    status: true
+                },
+                {
+                    name: 'MArtian',
+                    avatar: 'https://cdn.learnku.com/uploads/avatars/56030_1591034461.png!/both/100x100',
+                    status: false
+                },
+                {
+                    name: '小黑猫',
+                    avatar: 'https://cdn.learnku.com/uploads/avatars/1_1530614766.png!/both/100x100',
+                    status: true
+                }
+            ],
+            ws: 'ws://127.0.0.1:9502/im/connect',
+            socket: '',
+            form: {
+                comments: ''
+            },
+            text: '',
+            value: '',
+            dialog: false,
+            selectUser: [],
+            toUser: false
+        };
     },
-    SelectUser(user) {
-      this.selectUser = user;
-      this.toUser = true;
-      this.getMsgList({to_id:user.id})
+    computed: {
+        ...mapState(['auth', 'users', 'goodslist', 'msgData'])
     },
-    sendMsg() {
-      if (!this.toUser) {
-        this.$notify({
-          title: "提醒",
-          message: "未选择聊天对象",
-          type: "error",
-        });
-        return;
-      }
-      this.send({
-        from_id: this.users.id,
-        msg: this.value,
-        left: false,
-        to_id:this.selectUser.id
-      });
+    created() {
+        this.init();
+        this.$store.dispatch('getgoodlist');
+    },
+    methods: {
+        getMsgList(params) {
+            if (this.toUser) {
+                console.log('请求好友列表');
+                console.log(params);
+                this.$store.dispatch('getMsgList', params);
+            }
+        },
+        SelectUser(user) {
+            this.selectUser = user;
+            this.toUser = true;
+            this.getMsgList({ to_id: user.id });
+        },
+        sendMsg() {
+            if (!this.toUser) {
+                this.$notify({
+                    title: '提醒',
+                    message: '未选择聊天对象',
+                    type: 'error'
+                });
+                return;
+            }
+            this.send({
+                from_id: this.users.id,
+                msg: this.value,
+                left: false,
+                to_id: this.selectUser.id
+            });
 
-      this.value = "";
-      setTimeout(() => {
-        var ele = document.getElementById("msgDiv");
-        ele.scrollTop = ele.scrollHeight;
-      }, 500);
-    },
-    init: function () {
-      if (typeof WebSocket === "undefined") {
-        this.$notify({
-          title: "提醒",
-          message: "您的浏览器不支持socket",
-          type: "error",
-        });
-      } else {
-        // 实例化socket
-        try {
-          console.log(this.ws);
-          this.socket = new WebSocket(
-            this.ws + "?token=" + Cookies.get("token")
-          );
-          // 监听socket连接
-          this.socket.onopen = this.open;
-          // 监听socket错误信息
-          this.socket.onerror = this.error;
-          // 监听socket消息
-          this.socket.onmessage = this.getMessage;
-        } catch (error) {
-          this.$notify({
-            title: "error",
-            message: "socket链接失败",
-            type: "error",
-          });
+            this.value = '';
+            setTimeout(() => {
+                var ele = document.getElementById('msgDiv');
+                ele.scrollTop = ele.scrollHeight;
+            }, 500);
+        },
+        init: function() {
+            if (typeof WebSocket === 'undefined') {
+                this.$notify({
+                    title: '提醒',
+                    message: '您的浏览器不支持socket',
+                    type: 'error'
+                });
+            } else {
+                // 实例化socket
+                try {
+                    console.log(this.ws);
+                    this.socket = new WebSocket(this.ws + '?token=' + Cookies.get('token'));
+                    // 监听socket连接
+                    this.socket.onopen = this.open;
+                    // 监听socket错误信息
+                    this.socket.onerror = this.error;
+                    // 监听socket消息
+                    this.socket.onmessage = this.getMessage;
+                } catch (error) {
+                    this.$notify({
+                        title: 'error',
+                        message: 'socket链接失败',
+                        type: 'error'
+                    });
+                }
+            }
+        },
+        open: function(msg) {
+            console.log(msg);
+            console.log('socket连接成功');
+        },
+        error: function() {
+            console.log('连接错误');
+        },
+        getMessage: function(msg) {
+            let data = JSON.parse(msg.data);
+            console.log(data);
+            this.msgData.push(data);
+            console.log(this.msgData);
+        },
+        send: function(params = { user_id: 1, msg: '' }) {
+            this.socket.send(JSON.stringify(params));
+        },
+        close: function() {
+            console.log('socket已经关闭');
+        },
+        destroyed() {
+            // 销毁监听
+            this.socket.onclose = this.close;
+        },
+        setEmoji(emoji) {
+            console.log(emoji);
+        },
+        setGif(gif) {
+            console.log(gif);
+        },
+        logout() {
+            this.$confirm('是否退出登录?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.$store.dispatch('logoutUser');
+            });
         }
-      }
     },
-    open: function (msg) {
-      console.log(msg);
-      console.log("socket连接成功");
-    },
-    error: function () {
-      console.log("连接错误");
-    },
-    getMessage: function (msg) {
-      let data =JSON.parse(msg.data)
-      console.log(data)
-      this.msgData.push(data);
-      console.log(this.msgData);
-    },
-    send: function (params = { user_id: 1, msg: "" }) {
-      this.socket.send(JSON.stringify(params));
-    },
-    close: function () {
-      console.log("socket已经关闭");
-    },
-    destroyed() {
-      // 销毁监听
-      this.socket.onclose = this.close;
-    },
-    setEmoji(emoji) {
-      console.log(emoji);
-    },
-    setGif(gif) {
-      console.log(gif);
-    },
-    logout() {
-      this.$confirm("是否退出登录?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(() => {
-        this.$store.dispatch("logoutUser");
-      });
-    },
-  },
-  mounted() {},
+    mounted() {}
 };
 </script>
 
 <style lang="scss" scoped>
 .el-main {
-  padding: 0px;
+    padding: 0px;
 }
 .im-container {
-  margin: 0 auto;
-  width: 60%;
-  height: 90%;
-  .fa-users {
-    padding: 10px;
-    display: flex;
-    height: 64px;
-    align-items: center;
-    justify-content: flex-start;
-    img {
-      width: 40px;
-      height: 40px;
-      border-radius: 3px;
+    margin: 0 auto;
+    width: 60%;
+    height: 90%;
+    .fa-users {
+        padding: 10px;
+        display: flex;
+        height: 64px;
+        align-items: center;
+        justify-content: flex-start;
+        img {
+            width: 40px;
+            height: 40px;
+            border-radius: 3px;
+        }
+        span {
+            font-size: 12px;
+            padding-left: 10px;
+        }
     }
-    span {
-      font-size: 12px;
-      padding-left: 10px;
+    .fa-users:hover {
+        background-color: #454b55;
     }
-  }
-  .fa-users:hover {
-    background-color: #454b55;
-  }
-  .fa-main-users {
-    margin-top: 30px;
-    padding: 10px;
-  }
-  //   border: 1px solid rgb(122, 118, 118);
-  .im-user-header {
-    display: flex;
-    align-items: center;
-    line-height: 70px;
-    justify-content: flex-start;
-    text-align: right;
-    font-size: 12px;
-    background-color: #2e3238;
-  }
-  .im-msg-header {
-    border-bottom: 1px solid #d6d6d6;
-    display: flex;
-    text-align: center;
-    font-size: 12px;
-    justify-content: center;
-    align-items: center;
-  }
-  .img-msg-main {
-    background-color: rgb(236 235 235);
-    border: none;
-  }
+    .fa-main-users {
+        margin-top: 30px;
+        padding: 10px;
+    }
+    //   border: 1px solid rgb(122, 118, 118);
+    .im-user-header {
+        display: flex;
+        align-items: center;
+        line-height: 70px;
+        justify-content: flex-start;
+        text-align: right;
+        font-size: 12px;
+        background-color: #2e3238;
+    }
+    .im-msg-header {
+        border-bottom: 1px solid #d6d6d6;
+        display: flex;
+        text-align: center;
+        font-size: 12px;
+        justify-content: center;
+        align-items: center;
+    }
+    .img-msg-main {
+        background-color: rgb(236 235 235);
+        border: none;
+    }
 }
 
 @media (max-width: 1400px) {
-  .im-container {
-    width: 80%;
-    height: 90%;
-  }
+    .im-container {
+        width: 80%;
+        height: 90%;
+    }
 }
 
 @media (max-width: 1000px) {
-  .im-container {
-    width: 100%;
-    height: 100%;
-  }
+    .im-container {
+        width: 100%;
+        height: 100%;
+    }
 }
 
 .app-msg {
-  background-color: rgb(236 235 235);
-  height: 80%;
-  padding: 10px;
+    background-color: rgb(236 235 235);
+    height: 80%;
+    padding: 10px;
 
-  .msg-content-left {
-    padding: 5px 0px 5px 0px;
-    align-items: center;
-    display: flex;
-    justify-content: left;
-    img {
-      box-shadow: 0 1px 10px 0 #a3b4bf;
-      height: 40px;
-      width: 40px;
-    }
-    span {
-      max-width: 70%;
-      border-radius: 3px;
-      -moz-border-radius: 3px;
-      -webkit-border-radius: 3px;
-      list-style: none;
-      text-align: left;
-      font-size: 14px;
-      background: #fff;
-      text-align: left;
-      margin: 5px 0 0 0;
-      display: inline-block;
-      padding: 8px 10px;
-      margin-top: 0;
+    .msg-content-left {
+        padding: 5px 0px 5px 0px;
+        align-items: center;
+        display: flex;
+        justify-content: left;
+        img {
+            box-shadow: 0 1px 10px 0 #a3b4bf;
+            height: 40px;
+            width: 40px;
+        }
+        span {
+            max-width: 70%;
+            border-radius: 3px;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            list-style: none;
+            text-align: left;
+            font-size: 14px;
+            background: #fff;
+            text-align: left;
+            margin: 5px 0 0 0;
+            display: inline-block;
+            padding: 8px 10px;
+            margin-top: 0;
 
-      word-break: break-all;
-      margin-left: 15px;
+            word-break: break-all;
+            margin-left: 15px;
+        }
+        span::before {
+            top: 11px;
+            right: 100%;
+            left: 44px;
+            display: block;
+            float: left;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+            content: ' ';
+            border-color: transparent;
+            border-style: solid solid outset;
+            border-width: 8px;
+            border-right-color: #fff;
+            margin-left: -26px;
+        }
     }
-    span::before {
-      top: 11px;
-      right: 100%;
-      left: 44px;
-      display: block;
-      float: left;
-      width: 0;
-      height: 0;
-      pointer-events: none;
-      content: " ";
-      border-color: transparent;
-      border-style: solid solid outset;
-      border-width: 8px;
-      border-right-color: #fff;
-      margin-left: -26px;
-    }
-  }
 
-  .msg-content-right {
-    padding: 5px 0px 5px 0px;
-    justify-content: flex-end;
-    display: flex;
-    align-items: center;
-    img {
-      box-shadow: 0 1px 10px 0 #a3b4bf;
-      height: 40px;
-      width: 40px;
-    }
-    span {
-      max-width: 70%;
-      border-radius: 3px;
-      -moz-border-radius: 3px;
-      -webkit-border-radius: 3px;
-      list-style: none;
-      text-align: left;
-      font-size: 14px;
-      background: #b2e281;
-      text-align: left;
-      margin: 5px 0 0 0;
-      display: inline-block;
-      padding: 8px 10px;
-      margin-top: 0;
+    .msg-content-right {
+        padding: 5px 0px 5px 0px;
+        justify-content: flex-end;
+        display: flex;
+        align-items: center;
+        img {
+            box-shadow: 0 1px 10px 0 #a3b4bf;
+            height: 40px;
+            width: 40px;
+        }
+        span {
+            max-width: 70%;
+            border-radius: 3px;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            list-style: none;
+            text-align: left;
+            font-size: 14px;
+            background: #b2e281;
+            text-align: left;
+            margin: 5px 0 0 0;
+            display: inline-block;
+            padding: 8px 10px;
+            margin-top: 0;
 
-      word-break: break-all;
-      margin-right: 10px;
+            word-break: break-all;
+            margin-right: 10px;
+        }
+        span::before {
+            top: 11px;
+            //   left: 200px;
+            //   right: 440px;
+            display: block;
+            float: right;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+            content: ' ';
+            border-color: transparent;
+            border-style: solid solid outset;
+            border-width: 8px;
+            border-left-color: #b2e281;
+            margin-right: -25px;
+        }
     }
-    span::before {
-      top: 11px;
-      //   left: 200px;
-      //   right: 440px;
-      display: block;
-      float: right;
-      width: 0;
-      height: 0;
-      pointer-events: none;
-      content: " ";
-      border-color: transparent;
-      border-style: solid solid outset;
-      border-width: 8px;
-      border-left-color: #b2e281;
-      margin-right: -25px;
-    }
-  }
 }
 .el-footer {
-  padding: 0px 0px;
-  box-sizing: border-box;
-  flex-shrink: 0;
+    padding: 0px 0px;
+    box-sizing: border-box;
+    flex-shrink: 0;
 }
 .app-msg-footer {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 .users-img {
-  width: 40px;
-  height: 40px;
-  text-align: center;
-  align-items: center;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    align-items: center;
 }
 .el-aside {
-  background-color: #0000;
+    background-color: #0000;
 }
 .el-header {
-  background-color: #eee;
+    background-color: #eee;
 }
 .common-layout {
-  background-color: aqua;
+    background-color: aqua;
 }
 .el-aside {
-  background-color: #2e3238;
-  // border: 1px solid #000;
+    background-color: #2e3238;
+    // border: 1px solid #000;
 }
 </style>
