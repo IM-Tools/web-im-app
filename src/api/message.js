@@ -1,25 +1,26 @@
 import request from '/@/utils/request';
 
-export function WeiBoCallBack(query) {
+export function WeiBoCallBack(params) {
     return request({
         url: '/WeiBoCallBack',
         method: 'get',
-        query
+        params
     });
 }
 
-export function GetGoodData(query) {
+export function GetGoodData(params) {
     return request({
         url: '/UsersList',
         method: 'get',
-        query
+        params
     });
 }
 
-export function GetMsgList(query) {
+export function GetMsgList(params) {
+    console.log(params);
     return request({
         url: '/InformationHistory',
         method: 'get',
-        query
+        params
     });
 }
