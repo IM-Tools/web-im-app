@@ -1,45 +1,45 @@
 import Cookies from 'js-cookie';
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
 
-import Home from "../views/Home.vue";
-import Login from "../views/login/index.vue";
+import Home from '../views/Home.vue';
+import Login from '../views/login/index.vue';
 
-const  routerMap = [
+const routerMap = [
     {
         path: '/',
         name: 'Home',
         component: Home,
-        meta:{
-            title:'Home',
+        meta: {
+            title: 'Home'
         }
     },
     {
         path: '/login',
         name: 'Login',
         component: Login,
-        meta:{
-            title:'login',
+        meta: {
+            title: 'login'
         }
     }
-]
+];
 
 const router = createRouter({
     //路由分为 history 模式 hash模式
     history: createWebHistory(),
     routes: routerMap //`routes: routes` 的缩写
-})
+});
 
 router.beforeEach((to, from, next) => {
     // 如果用户未能验证身份，则 `next` 会被调用两次
-    console.log(Cookies.get('auth'))
-    if (to.name !== 'Login' && Cookies.get('auth')==undefined){
-        console.log(from)
-        next({ name: 'Login' })
+    console.log(Cookies.get('auth'));
+    if (to.name !== 'Login' && Cookies.get('auth') == undefined) {
+        console.log(from);
+        next({ name: 'Login' });
     }
-    if(to.name=="Login" && Cookies.get('auth')=='true'){
-        next({ name: 'Home' })
+    if (to.name == 'Login' && Cookies.get('auth') == 'true') {
+        next({ name: 'Home' });
     }
-    next()
-  })
+    next();
+});
 
-export default router
+export default router;

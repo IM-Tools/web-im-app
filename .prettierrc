@@ -1,0 +1,13 @@
+{
+    "printWidth": 600,
+    "singleQuote": true,
+    "semi": true,
+    "arrowParens": "avoid",
+    "tabWidth": 4,
+    "useTabs": false,
+    "disableLanguages": [
+        "vue"
+    ],
+    "url": "https://www.cnblogs.com/oneweek/p/11236515.html",
+    "url2": "https://blog.csdn.net/m0_45236510/article/details/114704838"
+}
