@@ -91,7 +91,7 @@ export default {
     methods: {
         login() {
             login(this.form).then(({ data }) => {
-                this.$store.dispatch('loginUser', data.data);
+                this.$store.dispatch('loginUser', data);
             });
         },
         registered() {

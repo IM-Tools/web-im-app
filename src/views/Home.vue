@@ -81,6 +81,8 @@ export default {
     components: { DiscordPicker },
     data() {
         return {
+            timeout: 60000, //60ms
+            timeoutObj: null,
             placeholder: '开始聊天～',
             tableData: [
                 {
@@ -119,6 +121,15 @@ export default {
         this.$store.dispatch('getgoodlist');
     },
     methods: {
+        reset: function() {
+            clearTimeout(this.timeoutObj);
+            this.start();
+        },
+        start: function() {
+            this.timeoutObj = setTimeout(function() {
+                this.socket.send('HeartBeat');
+            }, this.timeout);
+        },
         getMsgList(params) {
             if (this.toUser) {
                 console.log('请求好友列表');
@@ -140,10 +151,34 @@ export default {
                 });
                 return;
             }
+            if (this.value == '') {
+                this.$notify({
+                    title: '提醒',
+                    message: '不能发送空消息～',
+                    type: 'error'
+                });
+                return;
+            }
+            if (this.socket == '') {
+                this.$notify({
+                    title: '提醒',
+                    message: '网络断开链接',
+                    type: 'error'
+                });
+                return;
+            }
+
             this.send({
                 from_id: this.users.id,
                 msg: this.value,
-                left: false,
+                status: 0,
+                to_id: this.selectUser.id
+            });
+
+            this.msgData.push({
+                from_id: this.users.id,
+                msg: this.value,
+                status: 0,
                 to_id: this.selectUser.id
             });
 
@@ -171,6 +206,8 @@ export default {
                     this.socket.onerror = this.error;
                     // 监听socket消息
                     this.socket.onmessage = this.getMessage;
+
+                    this.socket.onopen = this.onopen;
                 } catch (error) {
                     this.$notify({
                         title: 'error',
@@ -179,6 +216,15 @@ export default {
                     });
                 }
             }
+        },
+        onmessage(event) {
+            console.log(event);
+            this.reset();
+            this.start();
+        },
+        onopen: function() {
+            this.reset();
+            this.start();
         },
         open: function(msg) {
             console.log(msg);
@@ -189,34 +235,31 @@ export default {
         },
         getMessage: function(msg) {
             let data = JSON.parse(msg.data);
-            console.log(data);
-            this.msgData.push(data);
-            console.log(this.msgData);
+            const { code } = data;
+
+            switch (code) {
+                case 1000:
+                    console.log(data.msg);
+                    break;
+                case 1000:
+                case 200:
+                    this.msgData.push({
+                        msg: data.msg,
+                        from_id: data.from_id,
+                        from_id: data.to_id,
+                        status: 1
+                    });
+                    break;
+                case 5000:
+                    console.log(data.msg);
+                    break;
+            }
         },
         send: function(params = { user_id: 1, msg: '' }) {
             this.socket.send(JSON.stringify(params));
         },
         close: function() {
             console.log('socket已经关闭');
-        },
-        destroyed() {
-            // 销毁监听
-            this.socket.onclose = this.close;
-        },
-        setEmoji(emoji) {
-            console.log(emoji);
-        },
-        setGif(gif) {
-            console.log(gif);
-        },
-        logout() {
-            this.$confirm('是否退出登录?', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(() => {
-                this.$store.dispatch('logoutUser');
-            });
         }
     },
     mounted() {}
