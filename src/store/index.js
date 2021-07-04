@@ -76,6 +76,7 @@ export default createStore({
         getMsgList({ commit }, params) {
             GetMsgList(params).then(response => {
                 const { code, data } = response;
+                console.log(data);
                 commit('setMsgData', data);
             });
         }

@@ -8,7 +8,7 @@ export function me(query) {
     });
 }
 
-export function login(params) {
+export function login(query) {
     return request({
         url: '/login',
         method: 'post',
