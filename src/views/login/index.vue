@@ -71,7 +71,7 @@
                 ></path>
               </svg>
             </el-col>
-            <el-col class="item-center" :span="8">
+            <el-col class="item-center" @click="giteeLogin" :span="8">
               <svg
                 t="1624525807281"
                 class="icon"
@@ -138,6 +138,10 @@ export default {
     }
   },
   methods: {
+    giteeLogin(){
+          window.location.href =
+      "https://gitee.com/oauth/token?client_id=7e22fbb0ff807dd9768b88c5e4a89b92dedf4291e62ae395e5534b6f77122dde&redirect_uri=http://127.0.0.1:9502/api/giteeCallBack";
+    },
     login() {
       this.$notify({
         title: "提醒⏰",
@@ -154,7 +158,7 @@ export default {
     },
     weiboLogin() {
       window.location.href =
-        "https://api.weibo.com/oauth2/authorize?client_id=1949419161&redirect_uri=http://127.0.0.1:3002/login";
+      "https://api.weibo.com/oauth2/authorize?client_id=1949419161&redirect_uri=http://im.pltrue.top/login";
       // window.open(
       //   "https://api.weibo.com/oauth2/authorize?client_id=" +
       //     import.meta.env.VITE_APP_WB_CLIENT_ID +
