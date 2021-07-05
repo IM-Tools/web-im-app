@@ -1,0 +1,18 @@
+/* //重写样式 */
+.vue3-emojipicker {
+    background-color: #ecebeb !important;
+    color: #000 !important;
+    border-top: 1px solid #dfdbdb !important;
+    border-radius: 0px !important;
+  }
+  .vue3-emojipicker .vue3-discord-emojipicker__input {
+    background-color: #ecebeb !important;
+    color: #000 !important;
+  }
+
+  .vue3-emojipicker .bg-grey-400,
+  .vue3-discord-emojipicker__tabs,
+  .bg-grey-600,
+  .bg-grey-700 {
+    background-color: #ecebeb !important;
+  }

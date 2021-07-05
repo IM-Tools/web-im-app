@@ -10,7 +10,6 @@ const state = () => ({
     users: localStorage.getItem('users') ? JSON.parse(localStorage.getItem('users')) : false,
     token: Cookies.get('token') || undefined
 })
-
 const getters = {
 
 }

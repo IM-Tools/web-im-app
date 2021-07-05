@@ -2,7 +2,7 @@ import { GetGoodData, GetMsgList } from '../../api/message'
 import nested from './nested'
 
 const state = () => ({
-    goodslist: [],
+    goodslist: localStorage.getItem('goodslist') ? JSON.parse(localStorage.getItem('goodslist')) :[],
     msgData: []
 })
 
@@ -20,7 +20,7 @@ const actions = {
     onGetMsgList({ commit }, params) {
         GetMsgList(params).then(response => {
             const { code, data } = response;
-            console.log(data);
+            
             commit('setMsgData', data);
         });
     }
@@ -28,8 +28,8 @@ const actions = {
 
 const mutations = {
     setGoodslist(state, data) {
-        console.log(data);
         state.goodslist = data;
+        localStorage.setItem('goodslist',JSON.stringify(data))
     },
     setMsgData(state, data) {
         state.msgData = data;

@@ -61,21 +61,19 @@ body {
 
 //重写聊天组件样式
 .vue3-emojipicker {
-    background-color: gb(236 235 235);
+    background-color: #ecebeb;
     color: #000;
     border-top: 1px solid #dfdbdb;
     border-radius: 0px;
-
     .vue3-discord-emojipicker__input {
-        background-color: rgb(236 235 235);
+        background-color: #ecebeb;
         color: #000;
     }
-
     .bg-grey-400,
     .vue3-discord-emojipicker__tabs,
     .bg-grey-600,
     .bg-grey-700 {
-        background-color: rgb(236 235 235);
+        background-color: #ecebeb;
     }
 }
 

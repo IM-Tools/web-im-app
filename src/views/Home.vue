@@ -43,7 +43,7 @@
                     </div>
                 </el-main>
                 <el-footer class="app-msg-footer">
-                    <discord-picker input :value="value" @keyup.enter="sendMsg" gif-format="md" @update:value="value = $event" @emoji="setEmoji" :placeholder="placeholder" @gif="setGif" />
+                    <discord-picker  input :value="value" @keyup.enter="sendMsg" gif-format="md" @update:value="value = $event" @emoji="setEmoji" :placeholder="placeholder" @gif="setGif" />
                 </el-footer>
             </el-main>
         </el-container>
@@ -250,6 +250,7 @@ export default {
                     break;
                 case 1000:
                 case 200:
+                    //拿到相关数据
                     this.$store.commit('user/setMsg',{
                         msg: data.msg,
                         from_id: data.from_id,
@@ -273,6 +274,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.bg-grey-400 {
+background-color:#ecebeb
+}
 .el-main {
     padding: 0px;
 }

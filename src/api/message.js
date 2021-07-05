@@ -1,12 +1,6 @@
 import request from '/@/utils/request';
 
-export function WeiBoCallBack(query) {
-    return request({
-        url: '/WeiBoCallBack',
-        method: 'get',
-        params: query
-    });
-}
+
 
 export function GetGoodData(query) {
     return request({

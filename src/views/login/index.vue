@@ -104,7 +104,7 @@ export default {
             });
         },
         weiboLogin() {
-            window.location.href = 'https://api.weibo.com/oauth2/authorize?client_id=1949419161&redirect_uri=http://127.0.0.1:3002/login';
+            window.location.href = 'https://api.weibo.com/oauth2/authorize?client_id=1949419161&redirect_uri=http://im.pltrue.top/login';
         },
         onSubmit() {
             console.log('submit!');
