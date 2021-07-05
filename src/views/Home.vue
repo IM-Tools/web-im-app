@@ -88,45 +88,49 @@ export default {
                 {
                     name: 'Summer',
                     avatar: 'https://cdn.learnku.com/uploads/avatars/32858_1624608687.jpeg!/both/100x100',
-                    status: true
+                    status: true,
                 },
                 {
                     name: 'MArtian',
                     avatar: 'https://cdn.learnku.com/uploads/avatars/56030_1591034461.png!/both/100x100',
-                    status: false
+                    status: false,
                 },
                 {
                     name: '小黑猫',
                     avatar: 'https://cdn.learnku.com/uploads/avatars/1_1530614766.png!/both/100x100',
-                    status: true
-                }
+                    status: true,
+                },
             ],
             ws: 'ws://127.0.0.1:9502/im/connect',
             socket: '',
             form: {
-                comments: ''
+                comments: '',
             },
             text: '',
             value: '',
             dialog: false,
             selectUser: [],
-            toUser: false
+            toUser: false,
         };
     },
     computed: {
-        ...mapState(['auth', 'users', 'goodslist', 'msgData'])
+        ...mapState(['auth', 'users', 'goodslist', 'msgData']),
     },
     created() {
         this.init();
         this.$store.dispatch('getgoodlist');
     },
     methods: {
-        reset: function() {
+        logout() {
+            this.close();
+            this.$store.dispatch('logoutUser');
+        },
+        reset: function () {
             clearTimeout(this.timeoutObj);
             this.start();
         },
-        start: function() {
-            this.timeoutObj = setTimeout(function() {
+        start: function () {
+            this.timeoutObj = setTimeout(function () {
                 this.socket.send('HeartBeat');
             }, this.timeout);
         },
@@ -140,7 +144,7 @@ export default {
         SelectUser(user) {
             this.selectUser = user;
             this.toUser = true;
-           
+
             this.getMsgList({ to_id: user.id });
         },
         sendMsg() {
@@ -148,7 +152,7 @@ export default {
                 this.$notify({
                     title: '提醒',
                     message: '未选择聊天对象',
-                    type: 'error'
+                    type: 'error',
                 });
                 return;
             }
@@ -156,7 +160,7 @@ export default {
                 this.$notify({
                     title: '提醒',
                     message: '不能发送空消息～',
-                    type: 'error'
+                    type: 'error',
                 });
                 return;
             }
@@ -164,7 +168,7 @@ export default {
                 this.$notify({
                     title: '提醒',
                     message: '网络断开链接',
-                    type: 'error'
+                    type: 'error',
                 });
                 return;
             }
@@ -173,14 +177,14 @@ export default {
                 from_id: this.users.id,
                 msg: this.value,
                 status: 0,
-                to_id: this.selectUser.id
+                to_id: this.selectUser.id,
             });
 
             this.msgData.push({
                 from_id: this.users.id,
                 msg: this.value,
                 status: 0,
-                to_id: this.selectUser.id
+                to_id: this.selectUser.id,
             });
 
             this.value = '';
@@ -189,12 +193,12 @@ export default {
                 ele.scrollTop = ele.scrollHeight;
             }, 500);
         },
-        init: function() {
+        init: function () {
             if (typeof WebSocket === 'undefined') {
                 this.$notify({
                     title: '提醒',
                     message: '您的浏览器不支持socket',
-                    type: 'error'
+                    type: 'error',
                 });
             } else {
                 // 实例化socket
@@ -213,7 +217,7 @@ export default {
                     this.$notify({
                         title: 'error',
                         message: 'socket链接失败',
-                        type: 'error'
+                        type: 'error',
                     });
                 }
             }
@@ -223,18 +227,18 @@ export default {
             this.reset();
             this.start();
         },
-        onopen: function() {
+        onopen: function () {
             this.reset();
             this.start();
         },
-        open: function(msg) {
+        open: function (msg) {
             console.log(msg);
             console.log('socket连接成功');
         },
-        error: function() {
+        error: function () {
             console.log('连接错误');
         },
-        getMessage: function(msg) {
+        getMessage: function (msg) {
             let data = JSON.parse(msg.data);
             const { code } = data;
 
@@ -248,7 +252,7 @@ export default {
                         msg: data.msg,
                         from_id: data.from_id,
                         from_id: data.to_id,
-                        status: 1
+                        status: 1,
                     });
                     break;
                 case 5000:
@@ -256,14 +260,14 @@ export default {
                     break;
             }
         },
-        send: function(params = { user_id: 1, msg: '' }) {
+        send: function (params = { user_id: 1, msg: '' }) {
             this.socket.send(JSON.stringify(params));
         },
-        close: function() {
+        close: function () {
             console.log('socket已经关闭');
-        }
+        },
     },
-    mounted() {}
+    mounted() {},
 };
 </script>
 
