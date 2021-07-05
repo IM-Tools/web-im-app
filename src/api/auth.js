@@ -1,5 +1,5 @@
 import request from '/@/utils/request';
-
+import qs from 'qs'
 export function me(query) {
     return request({
         url: '/me',
@@ -12,6 +12,14 @@ export function login(query) {
     return request({
         url: '/login',
         method: 'post',
-        data:query
+        data:qs.parse(query)
+    });
+}
+
+export function WeiBoCallBack(query) {
+    return request({
+        url: '/WeiBoCallBack',
+        method: 'get',
+        params: query
     });
 }

@@ -17,7 +17,7 @@
             </el-header>
             <el-main class="fa-main-users" style="color: #fff">
                 <el-main>
-                    <div class="fa-users" v-for="list in goodslist" :key="list.id" @click="SelectUser(list)">
+                    <div class="fa-users" v-for="list in goodslist" :key="list.id" @click="setUser(list)">
                         <img :src="list.avatar" />
                         <span>{{ list.name }}</span>
                     </div>
@@ -73,10 +73,9 @@
     </el-container>
 </template>
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import DiscordPicker from 'vue3-discordpicker';
 import Cookies from 'js-cookie';
-
 export default {
     components: { DiscordPicker },
     data() {
@@ -113,17 +112,21 @@ export default {
             toUser: false,
         };
     },
-    computed: {
-        ...mapState(['auth', 'users', 'goodslist', 'msgData']),
-    },
+    computed: mapState({
+        users: state => state.auth.users,
+        auth: state => state.auth.auth,
+        goodslist: state => state.user.goodslist,
+        msgData: state => state.user.msgData,
+    }),
     created() {
         this.init();
-        this.$store.dispatch('getgoodlist');
+        this.onGetgoodlist();
     },
     methods: {
+        ...mapActions('user', ['onGetgoodlist', 'onGetMsgList']),
         logout() {
             this.close();
-            this.$store.dispatch('logoutUser');
+            this.$store.dispatch('auth/logoutUser');
         },
         reset: function () {
             clearTimeout(this.timeoutObj);
@@ -138,13 +141,13 @@ export default {
             if (this.toUser) {
                 console.log('请求好友列表');
                 console.log(params);
-                this.$store.dispatch('getMsgList', params);
+                this.onGetMsgList(params);
+                
             }
         },
-        SelectUser(user) {
+        setUser(user) {
             this.selectUser = user;
             this.toUser = true;
-
             this.getMsgList({ to_id: user.id });
         },
         sendMsg() {
@@ -179,8 +182,7 @@ export default {
                 status: 0,
                 to_id: this.selectUser.id,
             });
-
-            this.msgData.push({
+            this.$store.commit('user/setMsg', {
                 from_id: this.users.id,
                 msg: this.value,
                 status: 0,
@@ -248,7 +250,7 @@ export default {
                     break;
                 case 1000:
                 case 200:
-                    this.msgData.push({
+                    this.$store.commit('user/setMsg',{
                         msg: data.msg,
                         from_id: data.from_id,
                         from_id: data.to_id,
@@ -267,7 +269,6 @@ export default {
             console.log('socket已经关闭');
         },
     },
-    mounted() {},
 };
 </script>
 

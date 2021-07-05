@@ -55,9 +55,7 @@
         <div class="footer" style="">
             <p>由latent编码🔧 2021-{{ year }} 「web-im-app📦」</p>
             <p>
-                <a target="_black" href="https://github.com/pl1998/web-im-app">
-                    源码
-                </a>
+                <a target="_black" href="https://github.com/pl1998/web-im-app"> 源码 </a>
             </p>
             <p>
                 <a href="https://baike.baidu.com/item/MIT%E8%AE%B8%E5%8F%AF%E8%AF%81/6671281?fr=aladdin" target="_black">基于MIT开源</a>
@@ -67,20 +65,21 @@
 </template>
 <script>
 import { login } from '/@/api/auth';
+import { mapActions } from 'vuex';
 export default {
     data() {
         return {
             loginLoading: false,
             form: {
-                name: '',
-                password: ''
-            }
+                name: 'admin',
+                password: '123456',
+            },
         };
     },
     watch: {
         'this.$store.auth'() {
             this.$route.push({ path: '/' });
-        }
+        },
     },
     created() {
         if (this.$route.query.code) {
@@ -89,16 +88,19 @@ export default {
         }
     },
     methods: {
+        ...mapActions('auth',['onLoginUser', 'onWeiboLogin']),
+
         login() {
             login(this.form).then(({ data }) => {
-                this.$store.dispatch('loginUser', data);
+                this.onLoginUser(data);
+                //this.$store.dispatch('loginUser', data);
             });
         },
         registered() {
             this.$notify({
                 title: '提醒⏰',
                 message: '暂未开放用户注册',
-                type: 'warning'
+                type: 'warning',
             });
         },
         weiboLogin() {
@@ -109,9 +111,10 @@ export default {
         },
         auth(code) {
             this.loginLoading = true;
-            this.$store.dispatch('weiboLogin', { code: code });
-        }
-    }
+            this.onWeiboLogin({ code: code });
+            // this.$store.dispatch('weiboLogin', { code: code });
+        },
+    },
 };
 </script>
 <style lang="scss" scoped>

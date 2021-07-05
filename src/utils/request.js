@@ -12,7 +12,7 @@ const service = axios.create({
 service.interceptors.request.use(
     config => {
         //请求携带token
-        const token = store.state.token;
+        const token = Cookies.get('token');
         if (token != '' && token != undefined) {
             token && (config.headers.token = token);
         }
