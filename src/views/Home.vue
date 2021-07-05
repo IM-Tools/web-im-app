@@ -251,11 +251,12 @@ export default {
                 case 1000:
                 case 200:
                     //拿到相关数据
+                    console.log("测试",data)
                     this.$store.commit('user/setMsg',{
                         msg: data.msg,
                         from_id: data.from_id,
-                        from_id: data.to_id,
-                        status: 1,
+                        to_id: data.to_id,
+                        status: 1
                     });
                     break;
                 case 5000:
