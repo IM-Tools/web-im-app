@@ -14,7 +14,7 @@ service.interceptors.request.use(
         //请求携带token
         const token = Cookies.get('token');
         if (token != '' && token != undefined) {
-            token && (config.headers.token = token);
+            token && (config.headers.authorization = token);
         }
         return config;
     },
