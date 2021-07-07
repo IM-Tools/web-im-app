@@ -18,14 +18,16 @@
             <el-main class="fa-main-users" style="color: #fff">
                 <el-main>
                     <div class="fa-users" v-for="list in goodslist" :key="list.id" @click="setUser(list)">
-                        <div class="img-list">
-                            <i class="web-wechat-message">2</i>
+                        <div  class="img-list">
+                            <!-- 提示消息数量 -->
+                            <i v-if="list.msg_total" class="web-wechat-message">{{list.msg_total}}</i>
                             <img class="" :src="list.avatar" />
                         </div>
                         <i></i>
                         <span>{{ list.name }}</span>
-                        <p class="p-msg">测试</p>
-                        <span class="msg-time">22:33</span>
+                        <!-- 消息内容 -->
+                        <p class="p-msg">{{list.send_msg}}</p>
+                        <span class="msg-time">{{list.send_time}}</span>
                         <!-- <span style="color:red">....</span> -->
                     </div>
                 </el-main>
@@ -40,7 +42,7 @@
                     <span v-if="!toUser" style="font-size: 12px">请选择聊天</span>
                     <div v-else :key="list.id" v-for="list in msgData">
                         <p v-if="list.status" class="msg-content-left">
-                            <img class="img-left offline-img" :src="selectUser.avatar" />
+                            <img class="img-left" :src="selectUser.avatar" />
                             <span>{{ list.msg }}</span>
                         </p>
                         <p v-else class="msg-content-right">
@@ -154,6 +156,7 @@ export default {
         setUser(user) {
             this.selectUser = user;
             this.toUser = true;
+            this.$store.commit('user/clearMsg',{id:user.id});
             this.getMsgList({ to_id: user.id });
         },
         sendMsg() {
@@ -299,7 +302,7 @@ export default {
 }
 .web-wechat-message {
     position: absolute;
-    background-color: red;
+    background-color: #e62e2e;
     cursor: pointer;
     top: -6px;
     right: -6px;
@@ -308,10 +311,10 @@ export default {
     height: 15px;
     width: 25px;
     line-height: 15px;
-    font-size: 5px;
+    
     text-align: center;
     color: #fff;
-    
+     font-size: 12px;
 }
 .offline-img {
     -webkit-filter: grayscale(100%);
@@ -350,13 +353,19 @@ export default {
             border-radius: 3px;
         }
         .p-msg {
-            font-size: 7px;
-            color: #fff;
-            display: none;
+            font-size: 13px;
+            color: #989898;
+            /* display: none; */
             position: absolute;
-            right: 2px;
-            left: -100px;
-            word-wrap: break-word;
+            /* right: 2px; */
+            left: 60px;
+            /* word-wrap: break-word; */
+            bottom: 8px;
+            width: 150px;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         span {

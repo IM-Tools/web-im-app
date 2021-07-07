@@ -1,10 +1,11 @@
 import { GetGoodData, GetMsgList } from '../../api/message'
 import nested from './nested'
-import { setGoodsTop } from '../../utils/utils'
+import { setGoodsTop,cleanMsg } from '../../utils/utils'
 
 const state = () => ({
-    goodslist: localStorage.getItem('goodslist') ? JSON.parse(localStorage.getItem('goodslist')) : undefined,
-    msgData: []
+    goodslist: localStorage.getItem('goodslist') ? JSON.parse(localStorage.getItem('goodslist')) : undefined, //好友列表
+    msgData: [],    //单人消息数据
+    msgDataList:[]  //用户消息列表
 })
 
 const getters = {
@@ -24,7 +25,6 @@ const actions = {
     onGetMsgList({ commit }, params) {
         GetMsgList(params).then(response => {
             const { code, data } = response;
-
             commit('setMsgData', data);
         });
     }
@@ -39,18 +39,21 @@ const mutations = {
         state.msgData = data;
     },
     setMsg(state, data) {
-        if (data.status == 1) {
-            var  newList = setGoodsTop(state.goodslist, data.from_id)
-         
-        } else {
-            var newList  = setGoodsTop(state.goodslist, data.to_id)
-        }
+
+        var  newList = setGoodsTop(state.goodslist, data.from_id,data)
+       
         state.goodslist = newList;
         localStorage.setItem('goodslist', JSON.stringify(newList))
         state.msgData.push(data)
     },
     setOirderGoodList(state, data) {
 
+    },
+    clearMsg(state, data){
+        var  newList =  cleanMsg(state.goodslist,data.id)
+        state.goodslist = newList;
+        console.log(newList)
+        localStorage.setItem('goodslist', JSON.stringify(newList))
     }
 }
 
