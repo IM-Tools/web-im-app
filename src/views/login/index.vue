@@ -64,7 +64,7 @@
     </div>
 </template>
 <script>
-import { login } from '/@/api/auth';
+import { login } from '../../api/auth';
 import { mapActions } from 'vuex';
 export default {
     data() {

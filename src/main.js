@@ -9,6 +9,7 @@ import store from './store';
 import Cookies from 'js-cookie';
 import DiscordPicker from 'vue3-discordpicker';
 
+
 const app = createApp(App);
 app.config.devtools = true;
 app.use(ElementPlus);

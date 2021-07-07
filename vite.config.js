@@ -1,11 +1,14 @@
 const path = require('path');
+import vue from '@vitejs/plugin-vue'
 module.exports = {
+    plugins: [vue()],
     pluginOptions: {
         'style-resources-loader': {
             preProcessor: 'scss',
             patterns: []
         }
     },
+    
     alias: {
         '/@/': path.resolve(__dirname, './src')
     },

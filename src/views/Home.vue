@@ -18,8 +18,15 @@
             <el-main class="fa-main-users" style="color: #fff">
                 <el-main>
                     <div class="fa-users" v-for="list in goodslist" :key="list.id" @click="setUser(list)">
-                        <img :src="list.avatar" />
+                        <div class="img-list">
+                            <i class="web-wechat-message">2</i>
+                            <img class="" :src="list.avatar" />
+                        </div>
+                        <i></i>
                         <span>{{ list.name }}</span>
+                        <p class="p-msg">测试</p>
+                        <span class="msg-time">22:33</span>
+                        <!-- <span style="color:red">....</span> -->
                     </div>
                 </el-main>
             </el-main>
@@ -33,7 +40,7 @@
                     <span v-if="!toUser" style="font-size: 12px">请选择聊天</span>
                     <div v-else :key="list.id" v-for="list in msgData">
                         <p v-if="list.status" class="msg-content-left">
-                            <img class="img-left" :src="selectUser.avatar" />
+                            <img class="img-left offline-img" :src="selectUser.avatar" />
                             <span>{{ list.msg }}</span>
                         </p>
                         <p v-else class="msg-content-right">
@@ -43,7 +50,7 @@
                     </div>
                 </el-main>
                 <el-footer class="app-msg-footer">
-                    <discord-picker  input :value="value" @keyup.enter="sendMsg" gif-format="md" @update:value="value = $event" @emoji="setEmoji" :placeholder="placeholder" @gif="setGif" />
+                    <discord-picker input :value="value" @keyup.enter="sendMsg" gif-format="md" @update:value="value = $event" @emoji="setEmoji" :placeholder="placeholder" @gif="setGif" />
                 </el-footer>
             </el-main>
         </el-container>
@@ -142,7 +149,6 @@ export default {
                 console.log('请求好友列表');
                 console.log(params);
                 this.onGetMsgList(params);
-                
             }
         },
         setUser(user) {
@@ -251,12 +257,12 @@ export default {
                 case 1000:
                 case 200:
                     //拿到相关数据
-                    console.log("测试",data)
-                    this.$store.commit('user/setMsg',{
+                    console.log('测试', data);
+                    this.$store.commit('user/setMsg', {
                         msg: data.msg,
                         from_id: data.from_id,
                         to_id: data.to_id,
-                        status: 1
+                        status: 1,
                     });
                     break;
                 case 5000:
@@ -276,29 +282,91 @@ export default {
 
 <style lang="scss" scoped>
 .bg-grey-400 {
-background-color:#ecebeb
+    background-color: #ecebeb;
 }
 .el-main {
     padding: 0px;
 }
+
+.online-status {
+    /* display: flex; */
+    height: 7px;
+    width: 7px;
+    border-radius: 90%;
+    background-color: rgb(33, 185, 120) !important;
+    /* float: left; */
+    margin-left: 3px;
+}
+.web-wechat-message {
+    position: absolute;
+    background-color: red;
+    cursor: pointer;
+    top: -6px;
+    right: -6px;
+    font-style: normal;
+    border-radius: 30%;
+    height: 15px;
+    width: 25px;
+    line-height: 15px;
+    font-size: 5px;
+    text-align: center;
+    color: #fff;
+    
+}
+.offline-img {
+    -webkit-filter: grayscale(100%);
+    -moz-filter: grayscale(100%);
+    -ms-filter: grayscale(100%);
+    -o-filter: grayscale(100%);
+    filter: grayscale(100%);
+    filter: gray;
+}
+.offline-status {
+    background-color: gray !important;
+    height: 7px;
+    width: 7px;
+    border-radius: 90%;
+    margin-left: 3px;
+}
+
 .im-container {
     margin: 0 auto;
     width: 60%;
     height: 90%;
     .fa-users {
+        position: relative;
         padding: 10px;
         display: flex;
         height: 64px;
         align-items: center;
         justify-content: flex-start;
+        .img-list {
+            display: inline-block;
+            position: relative;
+        }
         img {
             width: 40px;
             height: 40px;
             border-radius: 3px;
         }
+        .p-msg {
+            font-size: 7px;
+            color: #fff;
+            display: none;
+            position: absolute;
+            right: 2px;
+            left: -100px;
+            word-wrap: break-word;
+        }
+
         span {
             font-size: 12px;
             padding-left: 10px;
+        }
+        .msg-time {
+            display: block;
+            position: absolute;
+            left: 190px;
         }
     }
     .fa-users:hover {

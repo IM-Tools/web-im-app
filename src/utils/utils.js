@@ -1,4 +1,3 @@
-
 /**
  * 
  * 根据消息更新好友列表
@@ -14,6 +13,11 @@ export function setGoodsTop(newArrayData,id) {
             newArrayData = temporaryArry.concat(newArrayData);
         }
     });
-    console.log(newArrayData);
+    
     return newArrayData
 }
+const utils ={
+
+}
+
+export default utils;

@@ -41,6 +41,7 @@ const mutations = {
     setMsg(state, data) {
         if (data.status == 1) {
             var  newList = setGoodsTop(state.goodslist, data.from_id)
+         
         } else {
             var newList  = setGoodsTop(state.goodslist, data.to_id)
         }

@@ -7,6 +7,10 @@
     "dev": "vite --mode development"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.35",
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@fortawesome/vue-fontawesome": "^2.0.2",
+    "@vitejs/plugin-vue": "^1.2.4",
     "axios": "^0.21.1",
     "element-plus": "^1.0.2-beta.52",
     "js-cookie": "^2.2.1",
@@ -23,7 +27,7 @@
     "sass": "^1.35.1",
     "sass-loader": "^12.1.0",
     "style-resources-loader": "^1.4.1",
-    "vite": "^1.0.0-rc.13",
+    "vite": "^2.3.7",
     "vue-cli-plugin-style-resources-loader": "~0.1.5",
     "vue-loader": "^15.9.7",
     "webpack": "^5.42.0",
