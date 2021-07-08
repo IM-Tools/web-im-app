@@ -52,7 +52,7 @@
                 </el-form-item>
             </el-form>
         </el-container>
-        <div class="footer" style="">
+        <!-- <div class="footer" style="">
             <p>由latent编码🔧 2021-{{ year }} 「web-im-app📦」</p>
             <p>
                 <a target="_black" href="https://github.com/pl1998/web-im-app"> 源码 </a>
@@ -60,7 +60,7 @@
             <p>
                 <a href="https://baike.baidu.com/item/MIT%E8%AE%B8%E5%8F%AF%E8%AF%81/6671281?fr=aladdin" target="_black">基于MIT开源</a>
             </p>
-        </div>
+        </div> -->
     </div>
 </template>
 <script>
@@ -88,7 +88,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions('auth',['onLoginUser', 'onWeiboLogin']),
+        ...mapActions('auth', ['onLoginUser', 'onWeiboLogin']),
 
         login() {
             login(this.form).then(({ data }) => {
@@ -119,21 +119,36 @@ export default {
 </script>
 <style lang="scss" scoped>
 .login-app {
-    background-color: aliceblue;
-    text-align: center;
-    border-radius: 20px;
-    width: 400px;
-    height: 350px;
-    margin: auto;
-    position: relative;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -190px;
+    margin-top: -270px;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    background-color: #fff;
+    width: 380px;
+    height: 540px;
+    box-shadow: 0 2px 10px #999;
+    -moz-box-shadow: #999 0 2px 10px;
+    -webkit-box-shadow: #999 0 2px 10px;
 }
 @media screen and (max-width: 750px) {
     .login-app {
-        width: 90%;
+        top: 50%;
+        left: 50%;
+        margin-left: -190px;
+        margin-top: -270px;
+        border-radius: 4px;
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+        background-color: #fff;
+        width: 380px;
+        height: 540px;
+        box-shadow: 0 2px 10px #999;
+        -moz-box-shadow: #999 0 2px 10px;
+        -webkit-box-shadow: #999 0 2px 10px;
     }
 }
 

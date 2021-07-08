@@ -14,6 +14,12 @@
   * 友好的第三方登录体验「支持微博登录」
 
 #### 效果图
+
+  * 聊天
+  ![emioj](/public/20210707220042.png)
+
+
+  
   * 登录页
 
 ![im-login](/public/WechatIMG385.png)
@@ -23,6 +29,8 @@
   * 聊天框
 
 ![emioj](/public/WechatIMG386.png)
+
+
 
 #### 鸣谢
   * [vue3](https://github.com/vuejs)

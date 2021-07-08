@@ -18,16 +18,16 @@
             <el-main class="fa-main-users" style="color: #fff">
                 <el-main>
                     <div class="fa-users" v-for="list in goodslist" :key="list.id" @click="setUser(list)">
-                        <div  class="img-list">
+                        <div class="img-list">
                             <!-- 提示消息数量 -->
-                            <i v-if="list.msg_total" class="web-wechat-message">{{list.msg_total}}</i>
-                            <img class="" :src="list.avatar" />
+                            <i v-if="list.msg_total" class="web-wechat-message">{{ list.msg_total }}</i>
+                            <img :class="list.status == 0 && 'offline-img'" :src="list.avatar" />
                         </div>
                         <i></i>
                         <span>{{ list.name }}</span>
                         <!-- 消息内容 -->
-                        <p class="p-msg">{{list.send_msg}}</p>
-                        <span class="msg-time">{{list.send_time}}</span>
+                        <p class="p-msg">{{ list.send_msg }}</p>
+                        <span class="msg-time">{{ list.send_time }}</span>
                         <!-- <span style="color:red">....</span> -->
                     </div>
                 </el-main>
@@ -134,8 +134,8 @@ export default {
     methods: {
         ...mapActions('user', ['onGetgoodlist', 'onGetMsgList']),
         logout() {
-            this.close();
             this.$store.dispatch('auth/logoutUser');
+            this.socket.close();
         },
         reset: function () {
             clearTimeout(this.timeoutObj);
@@ -148,15 +148,13 @@ export default {
         },
         getMsgList(params) {
             if (this.toUser) {
-                console.log('请求好友列表');
-                console.log(params);
                 this.onGetMsgList(params);
             }
         },
         setUser(user) {
             this.selectUser = user;
             this.toUser = true;
-            this.$store.commit('user/clearMsg',{id:user.id});
+            this.$store.commit('user/clearMsg', { id: user.id });
             this.getMsgList({ to_id: user.id });
         },
         sendMsg() {
@@ -184,20 +182,14 @@ export default {
                 });
                 return;
             }
-
-            this.send({
+            var data = {
                 from_id: this.users.id,
                 msg: this.value,
                 status: 0,
                 to_id: this.selectUser.id,
-            });
-            this.$store.commit('user/setMsg', {
-                from_id: this.users.id,
-                msg: this.value,
-                status: 0,
-                to_id: this.selectUser.id,
-            });
-
+            }
+            this.send(data);
+            this.$store.commit('user/setMsg',data);
             this.value = '';
             setTimeout(() => {
                 var ele = document.getElementById('msgDiv');
@@ -214,7 +206,6 @@ export default {
             } else {
                 // 实例化socket
                 try {
-                    console.log(this.ws);
                     this.socket = new WebSocket(this.ws + '?token=' + Cookies.get('token'));
                     // 监听socket连接
                     this.socket.onopen = this.open;
@@ -227,14 +218,13 @@ export default {
                 } catch (error) {
                     this.$notify({
                         title: 'error',
-                        message: 'socket链接失败',
+                        message: '客户端链接失败',
                         type: 'error',
                     });
                 }
             }
         },
         onmessage(event) {
-            console.log(event);
             this.reset();
             this.start();
         },
@@ -244,7 +234,6 @@ export default {
         },
         open: function (msg) {
             console.log(msg);
-            console.log('socket连接成功');
         },
         error: function () {
             console.log('连接错误');
@@ -252,28 +241,21 @@ export default {
         getMessage: function (msg) {
             let data = JSON.parse(msg.data);
             const { code } = data;
-
+            //监听消息 以及操作逻辑
             switch (code) {
                 case 1000:
-                    console.log(data.msg);
+                    this.$store.commit('user/setOnline', data);
                     break;
-                case 1000:
                 case 200:
                     //拿到相关数据
-                    console.log('测试', data);
-                    this.$store.commit('user/setMsg', {
-                        msg: data.msg,
-                        from_id: data.from_id,
-                        to_id: data.to_id,
-                        status: 1,
-                    });
+                    this.$store.commit('user/setMsg', {msg: data.msg,from_id: data.from_id,to_id: data.to_id,status:1});
                     break;
                 case 5000:
-                    console.log(data.msg);
+                    this.$store.commit('user/setOffline', data);
                     break;
             }
         },
-        send: function (params = { user_id: 1, msg: '' }) {
+        send: function (params={}) {
             this.socket.send(JSON.stringify(params));
         },
         close: function () {
@@ -311,10 +293,10 @@ export default {
     height: 15px;
     width: 25px;
     line-height: 15px;
-    
+
     text-align: center;
     color: #fff;
-     font-size: 12px;
+    font-size: 12px;
 }
 .offline-img {
     -webkit-filter: grayscale(100%);

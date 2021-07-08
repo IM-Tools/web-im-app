@@ -1,40 +1,70 @@
+import moment from 'moment'
 /**
  * 
  * 根据消息更新好友列表
- * @param {*} newArrayData 
+ * @param {*} userList 
  * @param {*} id 
  */
-export function setGoodsTop(newArrayData,id,data) {
-    var temporaryArry = [];
-    newArrayData.forEach((value, key) => {
-        if (value.id == id) {
-            var date = new Date()
-            //时间+1
-            if(data.status=1){
-                newArrayData[key].msg_total=Number(newArrayData[key].msg_total)+1
+export function setGoodsTop(userList,data) {
+    var newUserList = [];
+   
+    if(data.status==0){
+        userList.forEach((value, key) => {
+            if (value.id == data.to_id) {
+                userList[key].send_time=moment().format('H:mm')
+                userList[key].send_msg=data.msg
+                newUserList.push(userList[key]);
+                userList.splice(key, 1)
+                userList = newUserList.concat(userList);
             }
-            newArrayData[key].send_time=date.getHours()+":"+date.getMinutes()
-            //消息+1
-            //具体消息
-            newArrayData[key].send_msg=data.msg
-            temporaryArry.push(newArrayData[key]);
-            newArrayData.splice(key, 1)
-            newArrayData = temporaryArry.concat(newArrayData);
-        }
-    });
-    
-    return newArrayData
+        });
+    }else{
+     
+        userList.forEach((value, key) => {
+        
+            if (value.id == data.from_id) {
+                userList[key].msg_total=Number(userList[key].msg_total)+1
+                console.log('----',userList[key])
+                userList[key].send_time=moment().format('H:mm')
+                userList[key].send_msg=data.msg
+                newUserList.push(userList[key]);
+                userList.splice(key, 1)
+                userList = newUserList.concat(userList);
+            }
+        });
+    }
+    return userList
 }
-export function cleanMsg(newArrayData,id)
+/**
+ * 设置提醒消息内容
+ * @param {*} userList 
+ * @param {*} id 
+ * @returns 
+ */
+export function cleanMsg(userList,id)
 {
-    var temporaryArry = [];
-    newArrayData.forEach((value, key) => {
+    userList.forEach((value, key) => {
         if (value.id == id) {
-            newArrayData[key].msg_total=""
+            userList[key].msg_total=""
         }
     });
-    
-    return newArrayData
+    return userList
+}
+
+/**
+ * 设置用户状态
+ * @param {*} userList 
+ * @param {*} id 
+ * @param {*} status 
+ * @returns 
+ */
+export function setUsersStatus(userList,id,status){
+    userList.forEach((value, key) => {
+        if (value.id == id) {
+            userList[key].status=Number(status)
+        }
+    });
+    return userList
 }
 
 
