@@ -9,7 +9,8 @@
                     <template #dropdown>
                         <el-dropdown-menu>
                             <el-dropdown-item><i class="el-icon-user"></i>个人信息</el-dropdown-item>
-                            <el-dropdown-item @click="dialog = true"><i class="el-icon-search"></i>添加好友</el-dropdown-item>
+                            <el-dropdown-item @click="dialog = true"><i class="el-icon-search"></i>好友搜索</el-dropdown-item>
+                            <el-dropdown-item @click="GoodFriendDialogVisible = true"><i class="el-icon-plus"></i>创建群聊</el-dropdown-item>
                             <el-dropdown-item @click="logout"><i class="el-icon-unlock"></i>退出登录</el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
@@ -79,16 +80,19 @@
           </el-table-column>
         </el-table>
     </el-dialog> -->
+<GoodFriend :GoodFriendDialogVisible="GoodFriendDialogVisible"  :before-close="handleFriendDialogClose"></GoodFriend>
     </el-container>
 </template>
 <script>
 import { mapState, mapActions } from 'vuex';
 import DiscordPicker from 'vue3-discordpicker';
 import Cookies from 'js-cookie';
+import GoodFriend from '../components/GoodFriend.vue'
 export default {
-    components: { DiscordPicker },
+    components: { DiscordPicker,GoodFriend },
     data() {
         return {
+            GoodFriendDialogVisible:false,
             timeout: 60000, //60ms
             timeoutObj: null,
             placeholder: '开始聊天～',
@@ -109,7 +113,7 @@ export default {
                     status: true,
                 },
             ],
-            ws: 'ws://127.0.0.1:9502/im/connect',
+            ws: import.meta.env.VITE_APP_WS,
             socket: '',
             form: {
                 comments: '',
@@ -142,8 +146,8 @@ export default {
             this.start();
         },
         start: function () {
-            this.timeoutObj = setTimeout(function () {
-                this.socket.send('HeartBeat');
+            this.timeoutObj = setTimeout(()=>{
+                 this.socket.send('HeartBeat');
             }, this.timeout);
         },
         getMsgList(params) {
@@ -197,6 +201,7 @@ export default {
             }, 500);
         },
         init: function () {
+            console.log(this.ws)
             if (typeof WebSocket === 'undefined') {
                 this.$notify({
                     title: '提醒',
@@ -261,6 +266,10 @@ export default {
         close: function () {
             console.log('socket已经关闭');
         },
+        handleFriendDialogClose(done){
+            this.GoodFriendDialogVisible=false
+            done()
+        }
     },
 };
 </script>
@@ -391,6 +400,18 @@ export default {
     }
 }
 
+@media (min-width: 1445px) {
+    .im-container {
+        width: 80%;
+        height: 90%;
+    }
+}
+
+@media (max-width: 1440px) {
+    .im-container {
+        width: 80%;
+    }
+}
 @media (max-width: 1400px) {
     .im-container {
         width: 80%;
@@ -401,6 +422,12 @@ export default {
 @media (max-width: 1000px) {
     .im-container {
         width: 100%;
+        height: 100%;
+    }
+}
+
+@media (max-height: 750px) {
+    .im-container {
         height: 100%;
     }
 }

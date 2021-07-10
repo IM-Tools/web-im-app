@@ -40,7 +40,6 @@ const mutations = {
     },
     setMsg(state, data) {
         var  newList = setGoodsTop(state.goodslist,data)
-       
         state.goodslist = newList;
         localStorage.setItem('goodslist', JSON.stringify(newList))
         state.msgData.push(data)

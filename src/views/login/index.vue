@@ -71,8 +71,8 @@ export default {
         return {
             loginLoading: false,
             form: {
-                name: 'admin',
-                password: '123456',
+                name: '',
+                password: '',
             },
         };
     },
