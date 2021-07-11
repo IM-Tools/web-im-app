@@ -22,7 +22,7 @@
                         <div class="img-list">
                             <!-- 提示消息数量 -->
                             <i v-if="list.msg_total" class="web-wechat-message">{{ list.msg_total }}</i>
-                            <img :class="list.status == 0 && 'offline-img'" :src="list.avatar" />
+                            <img :class="list.status == 0 ? 'offline-img' :'' " :src="list.avatar" />
                         </div>
                         <i></i>
                         <span>{{ list.name }}</span>
@@ -402,7 +402,7 @@ export default {
 
 @media (min-width: 1445px) {
     .im-container {
-        width: 80%;
+        width: 70%;
         height: 90%;
     }
 }

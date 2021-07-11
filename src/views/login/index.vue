@@ -10,7 +10,7 @@
                     <el-input type="text" v-model="form.name"></el-input>
                 </el-form-item>
                 <el-form-item label="密码">
-                    <el-input type="password" v-model="form.password"></el-input>
+                    <el-input type="password"  @keyup.enter="login" v-model="form.password"></el-input>
                 </el-form-item>
                 <p>第三方登录</p>
                 <el-form-item label="">
@@ -47,7 +47,7 @@
                     </el-row>
                 </el-form-item>
                 <el-form-item class="login-btn">
-                    <el-button @click="login" type="login">登录</el-button>
+                    <el-button @click="login"  type="login">登录</el-button>
                     <el-button @click="registered">注册</el-button>
                 </el-form-item>
             </el-form>
