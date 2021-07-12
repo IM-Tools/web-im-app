@@ -65,6 +65,12 @@ body {
 
 }
 
+img {
+    width: 40px;
+    height: 40px;
+    border-radius: 3px;
+}
+
 @media (max-height: 750px) {
     #app {
         margin-top: 0px;
@@ -96,4 +102,27 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.el-table .cell {
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    word-break: break-all;
+    line-height: 23px;
+    padding-left: 10px;
+    padding-right: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.el-table__body-wrapper {
+    overflow: auto !important;
+    position: relative;
+    height: 200px;
+}
+
+.el-table td, .el-table th.is-leaf{
+    border-bottom: 1px solid #fff !important;
 }
