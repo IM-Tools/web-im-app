@@ -5,13 +5,13 @@
 </p>
 
 > 这是一个vue3+element-plus编写的网页im web端📱 📲
-  * 响应式布局
-  * 全面模仿微信网页Ui风格
-  * vue+vue-router+element-plus+vuex全家桶的使用
-  * 下一代前端打包工具[vite](https://github.com/vitejs/vite)使用和配置
-  * 客户端缓存化
-  * 好友在线离线模式显示
-  * 友好的第三方登录体验「支持微博登录」
+   - [x] 响应式布局
+   - [x] 全面模仿微信网页Ui风格
+   - [x] vue+vue-router+element-plus+vuex全家桶的使用
+   - [x] 下一代前端打包工具[vite](https://github.com/vitejs/vite)使用和配置
+   - [x] 客户端缓存化
+   - [x] 好友在线离线模式显示
+   - [x] 友好的第三方登录体验「支持微博登录」
 
 #### 效果图
 
