@@ -136,7 +136,7 @@ export default {
         this.onGetgoodlist();
     },
     methods: {
-        ...mapActions('user', ['onGetgoodlist', 'onGetMsgList']),
+        ...mapActions('user', ['onGetgoodlist', 'onGetMsgList','onReadMessage']),
         logout() {
             this.$store.dispatch('auth/logoutUser');
             this.socket.close();
@@ -160,6 +160,7 @@ export default {
             this.toUser = true;
             this.$store.commit('user/clearMsg', { id: user.id });
             this.getMsgList({ to_id: user.id });
+            this.onReadMessage({ to_id: user.id })
         },
         sendMsg() {
             if (!this.toUser) {

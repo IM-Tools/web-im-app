@@ -45,11 +45,12 @@ export default {
 </script>
 <style scoped>
 .footer{
- margin: auto;
-  position: relative;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+    color: #fff;
+    margin: auto;
+    position: absolute;
+    /* top: 30px; */
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 </style>

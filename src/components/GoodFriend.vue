@@ -1,7 +1,8 @@
 <template>
     <el-dialog title="创建一个群组" v-model="GoodFriendDialogVisible" width="500px" @close="$emit('update:GoodFriendDialogVisible', false)">
         <el-form :model="numberValidateForm">
-            <el-input ref="numberValidateForm" label-width="100px" class="demo-ruleForm" placeholder="请输入内容" prefix-icon="el-icon-search" v-model="searchFrom.keyword" @keyup.enter="searchGoods" @mouseleave="searchGoods"> </el-input>
+            <el-input ref="numberValidateForm" label-width="100px" class="demo-ruleForm" placeholder="请输入内容" prefix-icon="el-icon-search"  v-model="searchFrom.keyword" 
+            @keyup.enter="searchGoods" @mouseleave="searchGoods"> </el-input>
         </el-form>
         <el-table ref="multipleTable" :data="list" tooltip-effect="dark" style="width: 100%; overflow: auto" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"> </el-table-column>
@@ -82,6 +83,7 @@ export default {
             this.multipleSelection = val;
         },
         handleFriendDialogClose(done) {
+          this.multipleSelection=[];
             done();
         },
     },

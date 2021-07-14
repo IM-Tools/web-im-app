@@ -1,4 +1,4 @@
-import { GetGoodData, GetMsgList } from '../../api/message'
+import { GetGoodData, GetMsgList,ReadMessage } from '../../api/message'
 import nested from './nested'
 import { setGoodsTop,cleanMsg,setUsersStatus } from '../../utils/utils'
 
@@ -26,6 +26,12 @@ const actions = {
         GetMsgList(params).then(response => {
             const { code, data } = response;
             commit('setMsgData', data);
+        });
+    },
+    onReadMessage({commit},params) {
+        //ReadMessage
+        ReadMessage(params).then(response => {
+           
         });
     }
 }
