@@ -1,5 +1,5 @@
 <template>
-    <el-dialog title="创建一个群组" v-model="GoodFriendDialogVisible" width="500px" @close="$emit('update:GoodFriendDialogVisible', false)">
+    <el-dialog :lock-scroll="false" :modal="false" title="创建一个群组" v-model="GoodFriendDialogVisible" width="500px" @close="$emit('update:GoodFriendDialogVisible', false)">
         <el-form :model="numberValidateForm">
             <el-input ref="numberValidateForm" label-width="100px" class="demo-ruleForm" placeholder="请输入内容" prefix-icon="el-icon-search"  v-model="searchFrom.keyword" 
             @keyup.enter="searchGoods" @mouseleave="searchGoods"> </el-input>

@@ -1,6 +1,7 @@
 import { GetGoodData, GetMsgList,ReadMessage } from '../../api/message'
 import nested from './nested'
 import { setGoodsTop,cleanMsg,setUsersStatus } from '../../utils/utils'
+import moment  from '../../utils/moment'
 
 const state = () => ({
     goodslist: localStorage.getItem('goodslist') ? JSON.parse(localStorage.getItem('goodslist')) : undefined, //好友列表
@@ -42,12 +43,33 @@ const mutations = {
         localStorage.setItem('goodslist', JSON.stringify(data))
     },
     setMsgData(state, data) {
+        var lets = data.length
+        data.forEach((value, key) => {
+            if(lets!=key+1){
+                console.log(value)
+                var last_time = new Date(value.created_at)
+                var next_time = new Date(data[key+1].created_at)
+                last_time = last_time.getTime(last_time)
+                next_time = next_time.getTime(next_time)
+
+              if(last_time-next_time >7200)
+              {
+                  data[key].time_status = 1
+              }else{
+                data[key].time_status=0
+              }
+            }else{
+                data[key].time_status=0
+            }
+        });
+     
         state.msgData = data;
     },
     setMsg(state, data) {
         var  newList = setGoodsTop(state.goodslist,data)
         state.goodslist = newList;
         localStorage.setItem('goodslist', JSON.stringify(newList))
+        console.log(data)
         state.msgData.push(data)
     },
     setOnline(state, data){

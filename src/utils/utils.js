@@ -5,28 +5,25 @@ import moment from 'moment'
  * @param {*} userList 
  * @param {*} id 
  */
-export function setGoodsTop(userList,data) {
+export function setGoodsTop(userList, data) {
     var newUserList = [];
-   
-    if(data.status==0){
+
+    if (data.status == 0) {
         userList.forEach((value, key) => {
             if (value.id == data.to_id) {
-                userList[key].send_time=moment().format('H:mm')
-                userList[key].send_msg=data.msg
+                userList[key].send_time = moment().format('H:mm')
+                userList[key].send_msg = data.msg
                 newUserList.push(userList[key]);
                 userList.splice(key, 1)
                 userList = newUserList.concat(userList);
             }
         });
-    }else{
-     
+    } else {
         userList.forEach((value, key) => {
-        
             if (value.id == data.from_id) {
-                userList[key].msg_total=Number(userList[key].msg_total)+1
-                console.log('----',userList[key])
-                userList[key].send_time=moment().format('H:mm')
-                userList[key].send_msg=data.msg
+                userList[key].msg_total = Number(userList[key].msg_total) + 1
+                userList[key].send_time = moment().format('H:mm')
+                userList[key].send_msg = data.msg
                 newUserList.push(userList[key]);
                 userList.splice(key, 1)
                 userList = newUserList.concat(userList);
@@ -41,11 +38,10 @@ export function setGoodsTop(userList,data) {
  * @param {*} id 
  * @returns 
  */
-export function cleanMsg(userList,id)
-{
+export function cleanMsg(userList, id) {
     userList.forEach((value, key) => {
         if (value.id == id) {
-            userList[key].msg_total=""
+            userList[key].msg_total = ""
         }
     });
     return userList
@@ -58,18 +54,26 @@ export function cleanMsg(userList,id)
  * @param {*} status 
  * @returns 
  */
-export function setUsersStatus(userList,id,status){
+export function setUsersStatus(userList, id, status) {
     userList.forEach((value, key) => {
         if (value.id == id) {
-            userList[key].status=Number(status)
+            userList[key].status = Number(status)
         }
     });
     return userList
 }
 
+export function renderTime(time) {
+    time = parseInt(time);
+    const nowStr = new Date();
+    const localStr = time ? new Date(time) : nowStr;
+    const localMoment = moment(localStr);
+    // const localFormat = localMoment.format("MM-DD hh:mm A");
+    const localFormat = localMoment.fromNow();
+    return localFormat;
+}
 
-
-const utils ={
+const utils = {
 
 }
 

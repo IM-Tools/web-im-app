@@ -126,3 +126,10 @@ img {
 .el-table td, .el-table th.is-leaf{
     border-bottom: 1px solid #fff !important;
 }
+
+.from-search{
+    .el-input__inner{
+      background-color: #26292e !important;
+      border: 1px solid #26292e !important;
+ }
+ }

@@ -24,10 +24,4 @@ export function WeiBoCallBack(query) {
     });
 }
 
-export function ReadMessage(query) {
-    return request({
-        url:'/ReadMessage',
-        method: 'get',
-        params: query
-    })
-}
+

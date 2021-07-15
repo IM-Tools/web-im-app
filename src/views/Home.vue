@@ -11,10 +11,15 @@
                             <el-dropdown-item><i class="el-icon-user"></i>个人信息</el-dropdown-item>
                             <el-dropdown-item @click="dialog = true"><i class="el-icon-search"></i>好友搜索</el-dropdown-item>
                             <el-dropdown-item @click="GoodFriendDialogVisible = true"><i class="el-icon-plus"></i>创建群聊</el-dropdown-item>
+                            <el-dropdown-item @click="CircleVisible = true"><i class="el-icon-bangzhu"></i>我的圈子</el-dropdown-item>
                             <el-dropdown-item @click="logout"><i class="el-icon-unlock"></i>退出登录</el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>
+                <i class="el-icon-refresh-left" style="margin-left: 15px; font-size: 20px; color: #fff" @click="refreshUser"></i>
+            </el-header>
+            <el-header class="im-user-header">
+                <el-input prefix-icon="el-icon-search" @mouseleave="searchGoods" class="from-search" placeholder="搜索" v-model="searchValue" size="small"> </el-input>
             </el-header>
             <el-main class="fa-main-users" style="color: #fff">
                 <el-main>
@@ -22,9 +27,9 @@
                         <div class="img-list">
                             <!-- 提示消息数量 -->
                             <i v-if="list.msg_total" class="web-wechat-message">{{ list.msg_total }}</i>
-                            <img :class="list.status == 0 ? 'offline-img' :'' " :src="list.avatar" />
+                            <img :class="list.status == 0 ? 'offline-img' : ''" :src="list.avatar" />
                         </div>
-                        <i></i>
+
                         <span>{{ list.name }}</span>
                         <!-- 消息内容 -->
                         <p class="p-msg">{{ list.send_msg }}</p>
@@ -40,8 +45,9 @@
             </el-header>
             <el-main class="img-msg-main">
                 <el-main id="msgDiv" width="" class="app-msg">
-                    <span v-if="!toUser" style="font-size: 12px">请选择聊天</span>
+                    <span v-if="!toUser" style="font-size: 12px"><i class="el-icon-chat-dot-round"></i>请选择聊天</span>
                     <div v-else :key="list.id" v-for="list in msgData">
+                        <i v-if="list.time_status" style="font-size: 10px">{{ renderTime(list.created_at) }}</i>
                         <p v-if="list.status" class="msg-content-left">
                             <img class="img-left" :src="selectUser.avatar" />
                             <span>{{ list.msg }}</span>
@@ -57,72 +63,39 @@
                 </el-footer>
             </el-main>
         </el-container>
-        <!-- <el-dialog title="搜索好友🔍" v-model="dialog">
-      <el-form :model="form" label-width="100px">
-        <el-form-item label="搜索好友"  >
-          <el-input  v-model="form.name" autocomplete="off"></el-input>
-         
-        </el-form-item>
-      </el-form>
-          <el-table :data="tableData" style="width: 100%">
-          <el-table-column prop="name" label="名称" width="100">
-          </el-table-column>
-           <el-table-column prop="avatar" label="头像" width="100">
-               <template #default="scope"> <img style="height:30px;width:30px" :src="scope.row.avatar"></template>
-          </el-table-column>
-          <el-table-column prop="address" label="状态">
-            <template #default="scope">
-           <i v-if="scope.row.status">在线</i>
-            <i v-else>离线</i>
-          </el-table-column>
-          <el-table-column prop="name" label="操作">
-   <el-button type="primary" size="mini" icon="el-icon-plus"></el-button>
-          </el-table-column>
-        </el-table>
-    </el-dialog> -->
-<GoodFriend :GoodFriendDialogVisible="GoodFriendDialogVisible"  :before-close="handleFriendDialogClose"></GoodFriend>
+        <GoodFriend :GoodFriendDialogVisible="GoodFriendDialogVisible" :before-close="handleFriendDialogClose"></GoodFriend>
+        <CircleFiends :CircleVisible="CircleVisible" :before-close="handleFriendDialogClose"></CircleFiends>
     </el-container>
 </template>
 <script>
 import { mapState, mapActions } from 'vuex';
 import DiscordPicker from 'vue3-discordpicker';
 import Cookies from 'js-cookie';
-import GoodFriend from '../components/GoodFriend.vue'
+import GoodFriend from '../components/GoodFriend.vue';
+import CircleFiends from '../components/CircleFiends.vue';
+import moment from '../utils/moment';
+moment.locale('zh-cn');
 export default {
-    components: { DiscordPicker,GoodFriend },
+    components: { DiscordPicker, GoodFriend, CircleFiends },
     data() {
         return {
-            GoodFriendDialogVisible:false,
+            GoodFriendDialogVisible: false,
+            CircleVisible: false,
             timeout: 60000, //60ms
             timeoutObj: null,
             placeholder: '开始聊天～',
-            tableData: [
-                {
-                    name: 'Summer',
-                    avatar: 'https://cdn.learnku.com/uploads/avatars/32858_1624608687.jpeg!/both/100x100',
-                    status: true,
-                },
-                {
-                    name: 'MArtian',
-                    avatar: 'https://cdn.learnku.com/uploads/avatars/56030_1591034461.png!/both/100x100',
-                    status: false,
-                },
-                {
-                    name: '小黑猫',
-                    avatar: 'https://cdn.learnku.com/uploads/avatars/1_1530614766.png!/both/100x100',
-                    status: true,
-                },
-            ],
             ws: import.meta.env.VITE_APP_WS,
             socket: '',
             form: {
                 comments: '',
             },
+            searchValue: '',
             text: '',
             value: '',
             dialog: false,
             selectUser: [],
             toUser: false,
+            userList:[]
         };
     },
     computed: mapState({
@@ -134,9 +107,41 @@ export default {
     created() {
         this.init();
         this.onGetgoodlist();
+        this.userList = this.goodslist
     },
     methods: {
-        ...mapActions('user', ['onGetgoodlist', 'onGetMsgList','onReadMessage']),
+        searchGoods(){
+            if (this.searchValue == '' || this.searchValue == undefined) {
+                this.userList = this.goodslist;
+                return;
+            }
+            let newList = this.userList.filter(value => {
+                if (value.name.search(this.searchValue) != -1) {
+                    return value;
+                }
+            });
+            this.userList = newList;
+        },
+        refreshUser() {
+            this.onGetgoodlist();
+            this.$notify({
+                title: '提醒',
+                message: '刷新好友列表成功',
+                type: 'success',
+            });
+        },
+        renderTime(date) {
+            var time = new Date(date);
+            time = time.getTime(time);
+            time = parseInt(time);
+            const nowStr = new Date();
+            const localStr = time ? new Date(time) : nowStr;
+            const localMoment = moment(localStr);
+            // const localFormat = localMoment.format("MM-DD hh:mm A");
+            const localFormat = localMoment.fromNow();
+            return localFormat;
+        },
+        ...mapActions('user', ['onGetgoodlist', 'onGetMsgList', 'onReadMessage']),
         logout() {
             this.$store.dispatch('auth/logoutUser');
             this.socket.close();
@@ -146,8 +151,8 @@ export default {
             this.start();
         },
         start: function () {
-            this.timeoutObj = setTimeout(()=>{
-                 this.socket.send('HeartBeat');
+            this.timeoutObj = setTimeout(() => {
+                this.socket.send('HeartBeat');
             }, this.timeout);
         },
         getMsgList(params) {
@@ -160,7 +165,7 @@ export default {
             this.toUser = true;
             this.$store.commit('user/clearMsg', { id: user.id });
             this.getMsgList({ to_id: user.id });
-            this.onReadMessage({ to_id: user.id })
+            this.onReadMessage({ to_id: user.id });
         },
         sendMsg() {
             if (!this.toUser) {
@@ -192,9 +197,9 @@ export default {
                 msg: this.value,
                 status: 0,
                 to_id: this.selectUser.id,
-            }
+            };
             this.send(data);
-            this.$store.commit('user/setMsg',data);
+            this.$store.commit('user/setMsg', data);
             this.value = '';
             setTimeout(() => {
                 var ele = document.getElementById('msgDiv');
@@ -202,7 +207,7 @@ export default {
             }, 500);
         },
         init: function () {
-            console.log(this.ws)
+            console.log(this.ws);
             if (typeof WebSocket === 'undefined') {
                 this.$notify({
                     title: '提醒',
@@ -212,6 +217,10 @@ export default {
             } else {
                 // 实例化socket
                 try {
+                    if(Cookies.get('token')==undefined || Cookies.get('token')==''){
+                        this.logout()
+                        return
+                    }
                     this.socket = new WebSocket(this.ws + '?token=' + Cookies.get('token'));
                     // 监听socket连接
                     this.socket.onopen = this.open;
@@ -254,23 +263,24 @@ export default {
                     break;
                 case 200:
                     //拿到相关数据
-                    this.$store.commit('user/setMsg', {msg: data.msg,from_id: data.from_id,to_id: data.to_id,status:1});
+                    this.$store.commit('user/setMsg', { msg: data.msg, from_id: data.from_id, to_id: data.to_id, status: 1 });
                     break;
                 case 5000:
-                    this.$store.commit('user/setOffline', data);
+                    this.$store.commit('user/setOffline', data);
                     break;
             }
         },
-        send: function (params={}) {
+        send: function (params = {}) {
             this.socket.send(JSON.stringify(params));
         },
         close: function () {
             console.log('socket已经关闭');
         },
-        handleFriendDialogClose(done){
-            this.GoodFriendDialogVisible=false
-            done()
-        }
+        handleFriendDialogClose(done) {
+            this.GoodFriendDialogVisible = false;
+            this.CircleVisible = false;
+            done();
+        },
     },
 };
 </script>
@@ -374,7 +384,6 @@ export default {
         background-color: #454b55;
     }
     .fa-main-users {
-        margin-top: 30px;
         padding: 10px;
     }
     //   border: 1px solid rgb(122, 118, 118);
