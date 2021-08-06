@@ -1,6 +1,6 @@
 <template>
     <el-container class="im-container">
-        <el-aside width="280px">
+        <el-aside style="transition:width 0.5s;"  :class=" isMenu==true ? 'left-header-according' :'left-header-hidden' ">
             <el-header class="im-user-header">
                 <img class="users-img" :src="users.avatar" />
                 <span style="color: #fff; margin-left: 10px; font-size: 18px">{{ users.name }}</span>
@@ -44,6 +44,9 @@
                 {{ selectUser.name ? selectUser.name : '未选择好友' }}
             </el-header>
             <el-main class="img-msg-main">
+                <div v-if="isMenu==false" class="el-backtop "  @click="leftMenu">
+                    <i class="el-icon-caret-left"></i>
+                </div>
                 <el-main id="msgDiv" width="" class="app-msg">
                     <span v-if="!toUser" style="font-size: 12px"><i class="el-icon-chat-dot-round"></i>请选择聊天</span>
                     <div v-else :key="list.id" v-for="list in msgData">
@@ -79,6 +82,7 @@ export default {
     components: { DiscordPicker, GoodFriend, CircleFiends },
     data() {
         return {
+            isMenu:true,
             GoodFriendDialogVisible: false,
             CircleVisible: false,
             timeout: 60000, //60ms
@@ -130,6 +134,9 @@ export default {
                 type: 'success',
             });
         },
+        leftMenu(){
+            this.isMenu=true
+        },
         renderTime(date) {
             var time = new Date(date);
             time = time.getTime(time);
@@ -161,11 +168,13 @@ export default {
             }
         },
         setUser(user) {
+
             this.selectUser = user;
             this.toUser = true;
             this.$store.commit('user/clearMsg', { id: user.id });
             this.getMsgList({ to_id: user.id });
             this.onReadMessage({ to_id: user.id });
+            this.isMenu=false
         },
         sendMsg() {
             if (!this.toUser) {
@@ -440,6 +449,7 @@ export default {
     .im-container {
         height: 100%;
     }
+  
 }
 
 .app-msg {

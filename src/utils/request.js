@@ -42,15 +42,15 @@ service.interceptors.response.use(
                     Cookies.remove('auth');
                     store.state.auth = false;
                     ElNotification.error({
-                        message: '登录过期,请重新登录'
+                        message: error.response.data.message
                     });
                     break;
                 case 403:
+                    console.log(error.response)
                     Cookies.remove('token');
                     Cookies.remove('auth');
-                    store.state.auth = false;
                     ElNotification.error({
-                        message: '登录过期,请重新登录'
+                        message: error.response.data.message
                     });
                     break;
                 case 404:
@@ -68,21 +68,21 @@ service.interceptors.response.use(
     }
 );
 
-// /**
-//   * get方法，对应get请求
-//   * @param {String} url [请求的url地址]
-//   * @param {Object} params [请求时携带的参数]
-//   */
-//  export function get(url, params={}){
-//     return new Promise((resolve, reject) =>{
-//         axios.get(url, {
-//             params: params
-//         }).then(res => {
-//             resolve(res.data);
-//         }).catch(err =>{
-//             reject(err.data)
-//     })
-// });}
+/**
+  * get方法，对应get请求
+  * @param {String} url [请求的url地址]
+  * @param {Object} params [请求时携带的参数]
+  */
+ export function get(url, params={}){
+    return new Promise((resolve, reject) =>{
+        axios.get(url, {
+            params: params
+        }).then(res => {
+            resolve(res.data);
+        }).catch(err =>{
+            reject(err.data)
+    })
+});}
 
 // /**
 //   * post方法，对应post请求

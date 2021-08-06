@@ -70,11 +70,40 @@ img {
     height: 40px;
     border-radius: 3px;
 }
+@media (max-height:815px) {
+    #app {
+        margin-top: 0px;
+    }
+    .left-header-according{
+        margin-left: 0px !important;
+        width: 100% !important;
+    }
+
+    .left-header-hidden{
+        margin-left: 0px !important;
+        width: 0% !important;
+    }
+}
 
 @media (max-height: 750px) {
     #app {
         margin-top: 0px;
     }
+    #app .el-container .el-aside {
+        margin-left: 0px !important;
+      
+    }
+
+    .left-header-according{
+        margin-left: 0px !important;
+        width: 100% !important;
+    }
+
+    .left-header-hidden{
+        margin-left: 0px !important;
+        width: 0% !important;
+    }
+
 }
 
 //重写聊天组件样式

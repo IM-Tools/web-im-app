@@ -92,8 +92,10 @@ export default {
         ...mapActions('auth', ['onLoginUser', 'onWeiboLogin']),
 
         login() {
-            login(this.form).then(({ data }) => {
-                this.onLoginUser(data);
+            login(this.form).then(({data}) => {
+              
+               this.onLoginUser(data);
+               
                 //this.$store.dispatch('loginUser', data);
             });
         },
@@ -151,6 +153,7 @@ export default {
         -moz-box-shadow: #999 0 2px 10px;
         -webkit-box-shadow: #999 0 2px 10px;
     }
+    
 }
 
 .el-container {
