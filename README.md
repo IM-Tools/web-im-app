@@ -33,5 +33,6 @@
   * [vite](https://github.com/vitejs)
   * [element-plus](https://element-plus.org/#/zh-CN)
   * [vue3-discordpicker](https://github.com/enzostvs/vue3-discordpicker)
+  * [API_KEY tenor.com (free, register here: https://tenor.com/gifapi)](https://tenor.com/)
 
 

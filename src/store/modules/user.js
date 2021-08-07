@@ -66,10 +66,11 @@ const mutations = {
         state.msgData = data;
     },
     setMsg(state, data) {
+      
         var  newList = setGoodsTop(state.goodslist,data)
         state.goodslist = newList;
         localStorage.setItem('goodslist', JSON.stringify(newList))
-        console.log(data)
+      
         state.msgData.push(data)
     },
     setOnline(state, data){

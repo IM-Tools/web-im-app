@@ -1,6 +1,6 @@
 <template>
     <el-container class="im-container">
-        <el-aside style="transition:width 0.5s;"  :class=" isMenu==true ? 'left-header-according' :'left-header-hidden' ">
+        <el-aside style="transition: width 0.5s" :class="isMenu == true ? 'left-header-according' : 'left-header-hidden'">
             <el-header class="im-user-header">
                 <img class="users-img" :src="users.avatar" />
                 <span style="color: #fff; margin-left: 10px; font-size: 18px">{{ users.name }}</span>
@@ -44,7 +44,7 @@
                 {{ selectUser.name ? selectUser.name : '未选择好友' }}
             </el-header>
             <el-main class="img-msg-main">
-                <div v-if="isMenu==false" class="el-backtop "  @click="leftMenu">
+                <div v-if="isMenu == false" class="el-backtop" @click="leftMenu">
                     <i class="el-icon-caret-left"></i>
                 </div>
                 <el-main id="msgDiv" width="" class="app-msg">
@@ -53,16 +53,26 @@
                         <i v-if="list.time_status" style="font-size: 10px">{{ renderTime(list.created_at) }}</i>
                         <p v-if="list.status" class="msg-content-left">
                             <img class="img-left" :src="selectUser.avatar" />
-                            <span>{{ list.msg }}</span>
+                            <span v-if="list.msg_type == 1">{{ list.msg }}</span>
+                            <span v-if="list.msg_type == 2">
+                                <div class="im-gif">
+                                    <img :src="list.msg" />
+                                </div>
+                            </span>
                         </p>
                         <p v-else class="msg-content-right">
-                            <span>{{ list.msg }}</span>
+                            <span v-if="list.msg_type == 1">{{ list.msg }}</span>
+                            <span v-if="list.msg_type == 2">
+                                <div class="im-gif">
+                                    <img :src="list.msg" />
+                                </div>
+                            </span>
                             <img class="img-right" :src="users.avatar" />
                         </p>
                     </div>
                 </el-main>
                 <el-footer class="app-msg-footer">
-                    <discord-picker input :value="value" @keyup.enter="sendMsg" gif-format="md" @update:value="value = $event" @emoji="setEmoji" :placeholder="placeholder" @gif="setGif" />
+                    <discord-picker :key="gifKey" input :value="value" @keyup.enter="sendMsg" @update:value="value = $event" @emoji="setEmoji" :placeholder="placeholder" @gif="setGif" />
                 </el-footer>
             </el-main>
         </el-container>
@@ -82,14 +92,17 @@ export default {
     components: { DiscordPicker, GoodFriend, CircleFiends },
     data() {
         return {
-            isMenu:true,
+            msg_type: 1,
+            gifKey: import.meta.env.VITE_APP_GIF_KEY,
+            isMenu: true,
             GoodFriendDialogVisible: false,
             CircleVisible: false,
             timeout: 60000, //60ms
             timeoutObj: null,
             placeholder: '开始聊天～',
             ws: import.meta.env.VITE_APP_WS,
-            socket: '',
+            md: '',
+            socket:null,
             form: {
                 comments: '',
             },
@@ -99,7 +112,14 @@ export default {
             dialog: false,
             selectUser: [],
             toUser: false,
-            userList:[]
+            userList: [],
+            msgForm: {
+                from_id: '',
+                msg: '',
+                status: 0,
+                to_id: '',
+                msg_type: 1, //1 文本消息 2 图片
+            },
         };
     },
     computed: mapState({
@@ -111,10 +131,10 @@ export default {
     created() {
         this.init();
         this.onGetgoodlist();
-        this.userList = this.goodslist
+        this.userList = this.goodslist;
     },
     methods: {
-        searchGoods(){
+        searchGoods() {
             if (this.searchValue == '' || this.searchValue == undefined) {
                 this.userList = this.goodslist;
                 return;
@@ -134,9 +154,10 @@ export default {
                 type: 'success',
             });
         },
-        leftMenu(){
-            this.isMenu=true
+        leftMenu() {
+            this.isMenu = true;
         },
+
         renderTime(date) {
             var time = new Date(date);
             time = time.getTime(time);
@@ -168,14 +189,20 @@ export default {
             }
         },
         setUser(user) {
-
             this.selectUser = user;
             this.toUser = true;
             this.$store.commit('user/clearMsg', { id: user.id });
             this.getMsgList({ to_id: user.id });
             this.onReadMessage({ to_id: user.id });
-            this.isMenu=false
+            if (window.innerWidth < 815) {
+                this.isMenu = false;
+            }
+            setTimeout(() => {
+                var ele = document.getElementById('msgDiv');
+                ele.scrollTop = ele.scrollHeight;
+            }, 500);
         },
+
         sendMsg() {
             if (!this.toUser) {
                 this.$notify({
@@ -193,7 +220,7 @@ export default {
                 });
                 return;
             }
-            if (this.socket == '') {
+            if (this.socket == null) {
                 this.$notify({
                     title: '提醒',
                     message: '网络断开链接',
@@ -201,19 +228,28 @@ export default {
                 });
                 return;
             }
-            var data = {
-                from_id: this.users.id,
-                msg: this.value,
-                status: 0,
-                to_id: this.selectUser.id,
-            };
-            this.send(data);
-            this.$store.commit('user/setMsg', data);
+
+
+        
+            this.msgForm=Object.assign({},{
+                from_id:this.users.id,
+                msg:this.value,
+                to_id:this.selectUser.id,
+                msg_type:this.msg_type,
+            });
             this.value = '';
+             this.socket.send('HeartBeat');
+            this.send(this.msgForm);
+            this.$store.commit('user/setMsg', this.msgForm);
+            this.msg_type = 1;
             setTimeout(() => {
                 var ele = document.getElementById('msgDiv');
                 ele.scrollTop = ele.scrollHeight;
             }, 500);
+        },
+        setGif(value) {
+            this.msg_type = 2;
+            this.value = value;
         },
         init: function () {
             console.log(this.ws);
@@ -226,9 +262,9 @@ export default {
             } else {
                 // 实例化socket
                 try {
-                    if(Cookies.get('token')==undefined || Cookies.get('token')==''){
-                        this.logout()
-                        return
+                    if (Cookies.get('token') == undefined || Cookies.get('token') == '') {
+                        this.logout();
+                        return;
                     }
                     this.socket = new WebSocket(this.ws + '?token=' + Cookies.get('token'));
                     // 监听socket连接
@@ -240,6 +276,7 @@ export default {
 
                     this.socket.onopen = this.onopen;
                 } catch (error) {
+                    console.log(error)
                     this.$notify({
                         title: 'error',
                         message: '客户端链接失败',
@@ -260,7 +297,8 @@ export default {
             console.log(msg);
         },
         error: function () {
-            console.log('连接错误');
+            this.socket = null
+            this.$notify.error('连接异常请检查网络')
         },
         getMessage: function (msg) {
             let data = JSON.parse(msg.data);
@@ -272,15 +310,16 @@ export default {
                     break;
                 case 200:
                     //拿到相关数据
-                    this.$store.commit('user/setMsg', { msg: data.msg, from_id: data.from_id, to_id: data.to_id, status: 1 });
+                    this.$store.commit('user/setMsg', { msg: data.msg, from_id: data.from_id, to_id: data.to_id, status: 1,msg_type:data.msg_type });
                     break;
                 case 5000:
                     this.$store.commit('user/setOffline', data);
                     break;
+                    
             }
         },
         send: function (params = {}) {
-            this.socket.send(JSON.stringify(params));
+          this.socket.send(JSON.stringify(params));
         },
         close: function () {
             console.log('socket已经关闭');
@@ -358,11 +397,12 @@ export default {
             display: inline-block;
             position: relative;
         }
-        img {
-            width: 40px;
-            height: 40px;
-            border-radius: 3px;
-        }
+
+        // img {
+        //     width: 40px;
+        //     height: 40px;
+        //     border-radius: 3px;
+        // }
         .p-msg {
             font-size: 13px;
             color: #989898;
@@ -449,24 +489,39 @@ export default {
     .im-container {
         height: 100%;
     }
-  
 }
 
 .app-msg {
     background-color: rgb(236 235 235);
     height: 80%;
     padding: 10px;
-
+    .im-gif {
+        height: 108px;
+        width: 189px;
+        box-shadow: 0 0px 0px 0 #a3b4bf;
+        img {
+            height: 100%;
+            width: 100%;
+        }
+    }
     .msg-content-left {
         padding: 5px 0px 5px 0px;
         align-items: center;
         display: flex;
         justify-content: left;
-        img {
-            box-shadow: 0 1px 10px 0 #a3b4bf;
-            height: 40px;
+
+        .img-left {
             width: 40px;
+            height: 40px;
+
+            box-shadow: 0 1px 10px 0 #a3b4bf;
         }
+
+        // img {
+        //     box-shadow: 0 1px 10px 0 #a3b4bf;
+        //     height: 40px;
+        //     width: 40px;
+        // }
         span {
             max-width: 70%;
             border-radius: 3px;
@@ -508,10 +563,21 @@ export default {
         justify-content: flex-end;
         display: flex;
         align-items: center;
-        img {
-            box-shadow: 0 1px 10px 0 #a3b4bf;
-            height: 40px;
+        .im-gif {
+            height: 108px;
+            width: 189px;
+            box-shadow: 0 0px 0px 0 #a3b4bf;
+        }
+        // img {
+        //     box-shadow: 0 1px 10px 0 #a3b4bf;
+        //     height: 40px;
+        //     width: 40px;
+        // }
+        .img-right {
             width: 40px;
+            height: 40px;
+
+            box-shadow: 0 1px 10px 0 #a3b4bf;
         }
         span {
             max-width: 70%;

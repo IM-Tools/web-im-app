@@ -12,7 +12,14 @@ export function setGoodsTop(userList, data) {
         userList.forEach((value, key) => {
             if (value.id == data.to_id) {
                 userList[key].send_time = moment().format('H:mm')
-                userList[key].send_msg = data.msg
+              
+                if(data.msg_type==1){
+                    userList[key].send_msg = data.msg
+                }else{
+                    userList[key].send_msg='表情..'
+                }
+             
+               
                 newUserList.push(userList[key]);
                 userList.splice(key, 1)
                 userList = newUserList.concat(userList);
@@ -23,7 +30,11 @@ export function setGoodsTop(userList, data) {
             if (value.id == data.from_id) {
                 userList[key].msg_total = Number(userList[key].msg_total) + 1
                 userList[key].send_time = moment().format('H:mm')
-                userList[key].send_msg = data.msg
+                if(data.msg_type==1){
+                    userList[key].send_msg = data.msg
+                }else{
+                    userList[key].send_msg='表情..'
+                }
                 newUserList.push(userList[key]);
                 userList.splice(key, 1)
                 userList = newUserList.concat(userList);
