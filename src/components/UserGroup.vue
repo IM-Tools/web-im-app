@@ -85,4 +85,180 @@ export default {
 .fa-main-users {
     padding: 10px;
 }
+.app-msg {
+    background-color: rgb(236 235 235);
+    height: 80%;
+    padding: 10px;
+    .im-gif {
+        max-height: 300px;
+        max-width: 300px;
+
+        box-shadow: 0 0px 0px 0 #a3b4bf;
+        img {
+            height: 100%;
+            width: 100%;
+        }
+    }
+    .msg-content-left {
+        padding: 5px 0px 5px 0px;
+        align-items: center;
+        display: flex;
+        justify-content: left;
+        .im-gif {
+            max-height: 300px;
+            max-width: 300px;
+            height: 100%;
+            width: 100%;
+            box-shadow: 0 0px 0px 0 #a3b4bf;
+            padding: 10px;
+        }
+        .img-left {
+            width: 40px;
+            height: 40px;
+
+            box-shadow: 0 1px 10px 0 #a3b4bf;
+        }
+
+        // img {
+        //     box-shadow: 0 1px 10px 0 #a3b4bf;
+        //     height: 40px;
+        //     width: 40px;
+        // }
+        span {
+            max-width: 70%;
+            border-radius: 3px;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            list-style: none;
+            text-align: left;
+            font-size: 14px;
+            background: #fff;
+            text-align: left;
+            margin: 5px 0 0 0;
+            display: inline-block;
+            padding: 8px 10px;
+            margin-top: 0;
+
+            word-break: break-all;
+            margin-left: 15px;
+        }
+        span::before {
+            top: 11px;
+            right: 100%;
+            left: 44px;
+            display: block;
+            float: left;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+            content: ' ';
+            border-color: transparent;
+            border-style: solid solid outset;
+            border-width: 8px;
+            border-right-color: #fff;
+            margin-left: -26px;
+        }
+    }
+
+    .msg-content-right {
+        padding: 5px 0px 5px 0px;
+        justify-content: flex-end;
+        display: flex;
+        align-items: center;
+        .im-gif {
+            max-height: 300px;
+            max-width: 300px;
+            height: 100%;
+            width: 100%;
+            box-shadow: 0 0px 0px 0 #a3b4bf;
+            padding: 10px;
+        }
+        // img {
+        //     box-shadow: 0 1px 10px 0 #a3b4bf;
+        //     height: 40px;
+        //     width: 40px;
+        // }
+        .img-right {
+            width: 40px;
+            height: 40px;
+
+            box-shadow: 0 1px 10px 0 #a3b4bf;
+        }
+        span {
+            max-width: 70%;
+            border-radius: 3px;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            list-style: none;
+            text-align: left;
+            font-size: 14px;
+            background: #b2e281;
+            text-align: left;
+            margin: 5px 0 0 0;
+            display: inline-block;
+            padding: 8px 10px;
+            margin-top: 0;
+
+            word-break: break-all;
+            margin-right: 10px;
+        }
+        span::before {
+            top: 11px;
+            //   left: 200px;
+            //   right: 440px;
+            display: block;
+            float: right;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+            content: ' ';
+            border-color: transparent;
+            border-style: solid solid outset;
+            border-width: 8px;
+            border-left-color: #b2e281;
+            margin-right: -25px;
+        }
+    }
+}
+
+.online-status {
+    /* display: flex; */
+    height: 7px;
+    width: 7px;
+    border-radius: 90%;
+    background-color: rgb(33, 185, 120) !important;
+    /* float: left; */
+    margin-left: 3px;
+}
+.web-wechat-message {
+    position: absolute;
+    background-color: #e62e2e;
+    cursor: pointer;
+    top: -6px;
+    right: -6px;
+    font-style: normal;
+    border-radius: 30%;
+    height: 15px;
+    width: 25px;
+    line-height: 15px;
+
+    text-align: center;
+    color: #fff;
+    font-size: 12px;
+}
+.offline-img {
+    -webkit-filter: grayscale(100%);
+    -moz-filter: grayscale(100%);
+    -ms-filter: grayscale(100%);
+    -o-filter: grayscale(100%);
+    filter: grayscale(100%);
+    filter: gray;
+}
+.offline-status {
+    background-color: gray !important;
+    height: 7px;
+    width: 7px;
+    border-radius: 90%;
+    margin-left: 3px;
+}
 </style>
