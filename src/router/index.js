@@ -1,9 +1,7 @@
 import Cookies from 'js-cookie';
 import { createRouter, createWebHistory } from 'vue-router';
-
-import Home from '../views/Home.vue';
+import Home from '../views/Chat.vue';
 import Login from '../views/login/index.vue';
-
 const routerMap = [
     {
         path: '/',
@@ -22,13 +20,11 @@ const routerMap = [
         }
     }
 ];
-
 const router = createRouter({
     //路由分为 history 模式 hash模式
     history: createWebHistory(),
     routes: routerMap //`routes: routes` 的缩写
 });
-
 router.beforeEach((to, from, next) => {
     // 如果用户未能验证身份，则 `next` 会被调用两次
     console.log(Cookies.get('auth'));

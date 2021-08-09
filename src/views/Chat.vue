@@ -11,7 +11,7 @@
                             <el-dropdown-item><i class="el-icon-user"></i>个人信息</el-dropdown-item>
                             <el-dropdown-item @click="dialog = true"><i class="el-icon-search"></i>好友搜索</el-dropdown-item>
                             <el-dropdown-item @click="GoodFriendDialogVisible = true"><i class="el-icon-plus"></i>创建群聊</el-dropdown-item>
-                            <el-dropdown-item @click="CircleVisible = true"><i class="el-icon-bangzhu"></i>我的圈子</el-dropdown-item>
+                            <!-- <el-dropdown-item @click="CircleVisible = true"><i class="el-icon-bangzhu"></i>我的圈子</el-dropdown-item> -->
                             <el-dropdown-item @click="logout"><i class="el-icon-unlock"></i>退出登录</el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
@@ -21,23 +21,7 @@
             <el-header class="im-user-header">
                 <el-input prefix-icon="el-icon-search" @mouseleave="searchGoods" class="from-search" placeholder="搜索" v-model="searchValue" size="small"> </el-input>
             </el-header>
-            <el-main class="fa-main-users" style="color: #fff">
-                <el-main>
-                    <div class="fa-users" v-for="list in goodslist" :key="list.id" @click="setUser(list)">
-                        <div class="img-list">
-                            <!-- 提示消息数量 -->
-                            <i v-if="list.msg_total" class="web-wechat-message">{{ list.msg_total }}</i>
-                            <img :class="list.status == 0 ? 'offline-img' : ''" :src="list.avatar" />
-                        </div>
-
-                        <span>{{ list.name }}</span>
-                        <!-- 消息内容 -->
-                        <p class="p-msg">{{ list.send_msg }}</p>
-                        <span class="msg-time">{{ list.send_time }}</span>
-                        <!-- <span style="color:red">....</span> -->
-                    </div>
-                </el-main>
-            </el-main>
+            <UserGroup @setUser="selectUserAction" :forUser="forUser" :goodslist="goodslist"></UserGroup>
         </el-aside>
         <el-container>
             <el-header class="im-msg-header">
@@ -47,30 +31,7 @@
                 <div v-if="isMenu == false" class="el-backtop" @click="leftMenu">
                     <i class="el-icon-caret-left"></i>
                 </div>
-                <el-main id="msgDiv" width="" class="app-msg">
-                    <span v-if="!toUser" style="font-size: 12px"><i class="el-icon-chat-dot-round"></i>请选择聊天</span>
-                    <div v-else :key="list.id" v-for="list in msgData">
-                        <i v-if="list.time_status" style="font-size: 10px">{{ renderTime(list.created_at) }}</i>
-                        <p v-if="list.status" class="msg-content-left">
-                            <img class="img-left" :src="selectUser.avatar" />
-                            <span v-if="list.msg_type == 1">{{ list.msg }}</span>
-                            <span v-if="list.msg_type == 2">
-                                <div class="im-gif">
-                                    <img :src="list.msg" />
-                                </div>
-                            </span>
-                        </p>
-                        <p v-else class="msg-content-right">
-                            <span v-if="list.msg_type == 1">{{ list.msg }}</span>
-                            <span v-if="list.msg_type == 2">
-                                <div class="im-gif">
-                                    <img :src="list.msg" />
-                                </div>
-                            </span>
-                            <img class="img-right" :src="users.avatar" />
-                        </p>
-                    </div>
-                </el-main>
+                <ChatMsg :msgList="msgData" :toUser="toUser" :selectUser="selectUser" :users="users"></ChatMsg>
                 <el-footer class="app-msg-footer">
                     <discord-picker :key="gifKey" input :value="value" @keyup.enter="sendMsg" @update:value="value = $event" @emoji="setEmoji" :placeholder="placeholder" @gif="setGif" />
                 </el-footer>
@@ -84,12 +45,16 @@
 import { mapState, mapActions } from 'vuex';
 import DiscordPicker from 'vue3-discordpicker';
 import Cookies from 'js-cookie';
+import ChatMsg from '../components/ChatMsg.vue';
+import UserGroup from '../components/UserGroup.vue';
+
 import GoodFriend from '../components/GoodFriend.vue';
 import CircleFiends from '../components/CircleFiends.vue';
 import moment from '../utils/moment';
+import { judgeData, DataBindA } from '../utils/utils';
 moment.locale('zh-cn');
 export default {
-    components: { DiscordPicker, GoodFriend, CircleFiends },
+    components: { DiscordPicker, GoodFriend, CircleFiends, ChatMsg, UserGroup },
     data() {
         return {
             msg_type: 1,
@@ -102,10 +67,11 @@ export default {
             placeholder: '开始聊天～',
             ws: import.meta.env.VITE_APP_WS,
             md: '',
-            socket:null,
+            socket: null,
             form: {
                 comments: '',
             },
+            forUser:[],
             searchValue: '',
             text: '',
             value: '',
@@ -134,6 +100,20 @@ export default {
         this.userList = this.goodslist;
     },
     methods: {
+        selectUserAction(data) {
+            this.selectUser = data;
+            this.toUser = true;
+            this.$store.commit('user/clearMsg', { id: data.id });
+            this.getMsgList({ to_id: data.id });
+            this.onReadMessage({ to_id: data.id });
+            if (window.innerWidth < 815) {
+                this.isMenu = false;
+            }
+            setTimeout(() => {
+                var ele = document.getElementById('msgDiv');
+                ele.scrollTop = ele.scrollHeight;
+            }, 500);
+        },
         searchGoods() {
             if (this.searchValue == '' || this.searchValue == undefined) {
                 this.userList = this.goodslist;
@@ -157,7 +137,6 @@ export default {
         leftMenu() {
             this.isMenu = true;
         },
-
         renderTime(date) {
             var time = new Date(date);
             time = time.getTime(time);
@@ -165,7 +144,6 @@ export default {
             const nowStr = new Date();
             const localStr = time ? new Date(time) : nowStr;
             const localMoment = moment(localStr);
-            // const localFormat = localMoment.format("MM-DD hh:mm A");
             const localFormat = localMoment.fromNow();
             return localFormat;
         },
@@ -188,21 +166,6 @@ export default {
                 this.onGetMsgList(params);
             }
         },
-        setUser(user) {
-            this.selectUser = user;
-            this.toUser = true;
-            this.$store.commit('user/clearMsg', { id: user.id });
-            this.getMsgList({ to_id: user.id });
-            this.onReadMessage({ to_id: user.id });
-            if (window.innerWidth < 815) {
-                this.isMenu = false;
-            }
-            setTimeout(() => {
-                var ele = document.getElementById('msgDiv');
-                ele.scrollTop = ele.scrollHeight;
-            }, 500);
-        },
-
         sendMsg() {
             if (!this.toUser) {
                 this.$notify({
@@ -229,16 +192,17 @@ export default {
                 return;
             }
 
-
-        
-            this.msgForm=Object.assign({},{
-                from_id:this.users.id,
-                msg:this.value,
-                to_id:this.selectUser.id,
-                msg_type:this.msg_type,
-            });
+            this.msgForm = Object.assign(
+                {},
+                {
+                    from_id: this.users.id,
+                    msg: DataBindA(this.value),
+                    to_id: this.selectUser.id,
+                    msg_type: judgeData(this.value),
+                }
+            );
             this.value = '';
-             this.socket.send('HeartBeat');
+            this.socket.send('HeartBeat');
             this.send(this.msgForm);
             this.$store.commit('user/setMsg', this.msgForm);
             this.msg_type = 1;
@@ -276,7 +240,7 @@ export default {
 
                     this.socket.onopen = this.onopen;
                 } catch (error) {
-                    console.log(error)
+                    console.log(error);
                     this.$notify({
                         title: 'error',
                         message: '客户端链接失败',
@@ -297,8 +261,8 @@ export default {
             console.log(msg);
         },
         error: function () {
-            this.socket = null
-            this.$notify.error('连接异常请检查网络')
+            this.socket = null;
+            this.$notify.error('连接异常请检查网络');
         },
         getMessage: function (msg) {
             let data = JSON.parse(msg.data);
@@ -310,16 +274,15 @@ export default {
                     break;
                 case 200:
                     //拿到相关数据
-                    this.$store.commit('user/setMsg', { msg: data.msg, from_id: data.from_id, to_id: data.to_id, status: 1,msg_type:data.msg_type });
+                    this.$store.commit('user/setMsg', { msg: data.msg, from_id: data.from_id, to_id: data.to_id, status: 1, msg_type: data.msg_type });
                     break;
                 case 5000:
                     this.$store.commit('user/setOffline', data);
                     break;
-                    
             }
         },
         send: function (params = {}) {
-          this.socket.send(JSON.stringify(params));
+            this.socket.send(JSON.stringify(params));
         },
         close: function () {
             console.log('socket已经关闭');
@@ -490,14 +453,14 @@ export default {
         height: 100%;
     }
 }
-
 .app-msg {
     background-color: rgb(236 235 235);
     height: 80%;
     padding: 10px;
     .im-gif {
-        height: 108px;
-        width: 189px;
+        max-height: 300px;
+        max-width: 300px;
+
         box-shadow: 0 0px 0px 0 #a3b4bf;
         img {
             height: 100%;
@@ -509,7 +472,14 @@ export default {
         align-items: center;
         display: flex;
         justify-content: left;
-
+        .im-gif {
+            max-height: 300px;
+            max-width: 300px;
+            height: 100%;
+            width: 100%;
+            box-shadow: 0 0px 0px 0 #a3b4bf;
+            padding: 10px;
+        }
         .img-left {
             width: 40px;
             height: 40px;
@@ -564,9 +534,12 @@ export default {
         display: flex;
         align-items: center;
         .im-gif {
-            height: 108px;
-            width: 189px;
+            max-height: 300px;
+            max-width: 300px;
+            height: 100%;
+            width: 100%;
             box-shadow: 0 0px 0px 0 #a3b4bf;
+            padding: 10px;
         }
         // img {
         //     box-shadow: 0 1px 10px 0 #a3b4bf;
