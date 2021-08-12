@@ -1,6 +1,11 @@
 import request from '../utils/request';
 
-
+export function GetSmToken() {
+    return request({
+        url: '/getApiToken',
+        method: 'get'
+    });
+}
 
 export function GetGoodData(query) {
     return request({

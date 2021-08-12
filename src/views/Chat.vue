@@ -33,7 +33,8 @@
                 </div>
                 <ChatMsg :msgList="msgData" :toUser="toUser" :selectUser="selectUser" :users="users"></ChatMsg>
                 <el-footer class="app-msg-footer">
-                    <discord-picker :key="gifKey" input :value="value" @keyup.enter="sendMsg" @update:value="value = $event" @emoji="setEmoji" :placeholder="placeholder" @gif="setGif" />
+                    <UploadImg @sendImgMsg="sendImgMsg" :dialogImageUrl="dialogImageUrl"></UploadImg>
+                    <discord-picker :key="gifKey" input :value="value" @keyup.enter="sendMsg" @update:value="value = $event" @emoji="setEmoji" :placeholder="placeholder" />
                 </el-footer>
             </el-main>
         </el-container>
@@ -50,13 +51,16 @@ import UserGroup from '../components/UserGroup.vue';
 
 import GoodFriend from '../components/GoodFriend.vue';
 import CircleFiends from '../components/CircleFiends.vue';
+import UploadImg from '../components/UploadImg.vue';
 import moment from '../utils/moment';
 import { judgeData, DataBindA } from '../utils/utils';
 moment.locale('zh-cn');
 export default {
-    components: { DiscordPicker, GoodFriend, CircleFiends, ChatMsg, UserGroup },
+    components: { DiscordPicker, GoodFriend, CircleFiends, ChatMsg, UserGroup, UploadImg },
     data() {
         return {
+            dialogImageUrl: '',
+            dialogVisibleImg: false,
             msg_type: 1,
             gifKey: import.meta.env.VITE_APP_GIF_KEY,
             isMenu: true,
@@ -71,7 +75,7 @@ export default {
             form: {
                 comments: '',
             },
-            forUser:[],
+            forUser: [],
             searchValue: '',
             text: '',
             value: '',
@@ -100,6 +104,7 @@ export default {
         this.userList = this.goodslist;
     },
     methods: {
+        ...mapActions('user', ['onGetgoodlist', 'onGetMsgList', 'onReadMessage']),
         selectUserAction(data) {
             this.selectUser = data;
             this.toUser = true;
@@ -147,7 +152,7 @@ export default {
             const localFormat = localMoment.fromNow();
             return localFormat;
         },
-        ...mapActions('user', ['onGetgoodlist', 'onGetMsgList', 'onReadMessage']),
+
         logout() {
             this.$store.dispatch('auth/logoutUser');
             this.socket.close();
@@ -165,6 +170,11 @@ export default {
             if (this.toUser) {
                 this.onGetMsgList(params);
             }
+        },
+        sendImgMsg(url) {
+            this.msg_type = 2;
+            this.value = url;
+            this.sendMsg();
         },
         sendMsg() {
             if (!this.toUser) {
@@ -191,16 +201,29 @@ export default {
                 });
                 return;
             }
+            if (this.msg_type == 2) {
+                this.msgForm = Object.assign(
+                    {},
+                    {
+                        from_id: this.users.id,
+                        msg: this.value,
+                        to_id: this.selectUser.id,
+                        msg_type: this.msg_type,
+                    }
+                );
+                this.msg_type=1;
+            } else {
+                this.msgForm = Object.assign(
+                    {},
+                    {
+                        from_id: this.users.id,
+                        msg: DataBindA(this.value),
+                        to_id: this.selectUser.id,
+                        msg_type: judgeData(this.value),
+                    }
+                );
+            }
 
-            this.msgForm = Object.assign(
-                {},
-                {
-                    from_id: this.users.id,
-                    msg: DataBindA(this.value),
-                    to_id: this.selectUser.id,
-                    msg_type: judgeData(this.value),
-                }
-            );
             this.value = '';
             this.socket.send('HeartBeat');
             this.send(this.msgForm);
@@ -595,6 +618,7 @@ export default {
 }
 .app-msg-footer {
     margin-top: 20px;
+    position: relative;
 }
 .users-img {
     width: 40px;

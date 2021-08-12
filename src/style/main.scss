@@ -162,3 +162,23 @@ img {
       border: 1px solid #26292e !important;
  }
  }
+
+ .el-upload--picture-card {
+    position: absolute;
+    background-color:#ecebeb !important;
+    border: none !important;
+    border-radius: 6px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 20px !important;
+    height: 20px !important;
+    cursor: pointer;
+    line-height: 20px !important;
+    align: top;
+    left: 4px;
+    z-index: 100;
+    top: 10px;
+    i{
+     font-size: 15px !important;
+    }
+}

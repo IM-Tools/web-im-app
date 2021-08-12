@@ -1,12 +1,13 @@
-import { GetGoodData, GetMsgList,ReadMessage } from '../../api/message'
+import { GetGoodData, GetMsgList,ReadMessage,GetSmToken} from '../../api/message'
 import nested from './nested'
 import { setGoodsTop,cleanMsg,setUsersStatus } from '../../utils/utils'
-import moment  from '../../utils/moment'
+
 
 const state = () => ({
     goodslist: localStorage.getItem('goodslist') ? JSON.parse(localStorage.getItem('goodslist')) : undefined, //好友列表
     msgData: [],    //单人消息数据
-    msgDataList:[]  //用户消息列表
+    msgDataList:[],  //用户消息列表,
+    smToken:undefined
 })
 
 const getters = {
@@ -31,13 +32,24 @@ const actions = {
     },
     onReadMessage({commit},params) {
         //ReadMessage
-        ReadMessage(params).then(response => {
+        ReadMessage(params).then((response) => {
            
         });
+    },
+    onTokenApi({commit}){
+        GetSmToken().then(response=>{
+            if(response.success){
+                commit('setSmToken',response.data.token)
+            }
+        })
     }
+
 }
 
 const mutations = {
+    setSmToken(state,data){
+        state.smToken=data
+    },
     setGoodslist(state, data) {
         state.goodslist = data;
         localStorage.setItem('goodslist', JSON.stringify(data))
