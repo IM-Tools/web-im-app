@@ -7,12 +7,14 @@
     "dev": "vite --mode development"
   },
   "dependencies": {
+    "@element-plus/icons": "0.0.11",
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/vue-fontawesome": "^2.0.2",
     "@vitejs/plugin-vue": "^1.4.0",
     "axios": "^0.21.1",
     "element-plus": "^1.0.2-beta.70",
+    "js-audio-recorder": "^1.0.7",
     "js-cookie": "^2.2.1",
     "moment": "^2.29.1",
     "qs": "^6.10.1",

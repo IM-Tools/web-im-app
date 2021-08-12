@@ -32,8 +32,9 @@
                     <i class="el-icon-caret-left"></i>
                 </div>
                 <ChatMsg :msgList="msgData" :toUser="toUser" :selectUser="selectUser" :users="users"></ChatMsg>
-                <el-footer class="app-msg-footer">
+                <el-footer class="app-msg-footer" v-if="selectUser.name">
                     <UploadImg @sendImgMsg="sendImgMsg" :dialogImageUrl="dialogImageUrl"></UploadImg>
+                    <Voice @sendVoiceMsg="sendVoiceMsg"></Voice>
                     <discord-picker :key="gifKey" input :value="value" @keyup.enter="sendMsg" @update:value="value = $event" @emoji="setEmoji" :placeholder="placeholder" />
                 </el-footer>
             </el-main>
@@ -52,11 +53,13 @@ import UserGroup from '../components/UserGroup.vue';
 import GoodFriend from '../components/GoodFriend.vue';
 import CircleFiends from '../components/CircleFiends.vue';
 import UploadImg from '../components/UploadImg.vue';
+import Voice from '../components/Voice.vue';
+
 import moment from '../utils/moment';
 import { judgeData, DataBindA } from '../utils/utils';
 moment.locale('zh-cn');
 export default {
-    components: { DiscordPicker, GoodFriend, CircleFiends, ChatMsg, UserGroup, UploadImg },
+    components: { DiscordPicker, GoodFriend, CircleFiends, ChatMsg, UserGroup, UploadImg, Voice },
     data() {
         return {
             dialogImageUrl: '',
@@ -176,6 +179,13 @@ export default {
             this.value = url;
             this.sendMsg();
         },
+        //发送视频
+        sendVoiceMsg(url) {
+            this.msg_type = 4;
+            this.value = url;
+             console.log(url)
+            this.sendMsg();
+        },
         sendMsg() {
             if (!this.toUser) {
                 this.$notify({
@@ -201,7 +211,7 @@ export default {
                 });
                 return;
             }
-            if (this.msg_type == 2) {
+            if (this.msg_type == 2 || this.msg_type == 4) {
                 this.msgForm = Object.assign(
                     {},
                     {
@@ -211,7 +221,7 @@ export default {
                         msg_type: this.msg_type,
                     }
                 );
-                this.msg_type=1;
+                this.msg_type = 1;
             } else {
                 this.msgForm = Object.assign(
                     {},

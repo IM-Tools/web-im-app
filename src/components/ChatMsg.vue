@@ -12,6 +12,9 @@
                 <span v-if="list.msg_type == 3">
                     <p v-html="list.msg"></p>
                 </span>
+                <audio class="audio-left" v-if="list.msg_type == 4" controls>
+                    <source :src="list.msg" type="audio/mpeg" />
+                </audio>
             </p>
             <p v-else class="msg-content-right">
                 <span v-if="list.msg_type == 1">
@@ -21,6 +24,9 @@
                 <span v-if="list.msg_type == 3">
                     <p v-html="list.msg"></p>
                 </span>
+                <audio class="audio-right" v-if="list.msg_type == 4" controls>
+                    <source :src="list.msg" type="audio/mpeg" />
+                </audio>
                 <img class="img-right" :src="users.avatar" />
             </p>
         </div>
@@ -53,6 +59,11 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.audio-right,
+.audio-left {
+    padding: 10px;
+}
+
 .app-msg {
     background-color: rgb(236 235 235);
     height: 80%;

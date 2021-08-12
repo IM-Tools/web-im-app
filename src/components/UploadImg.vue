@@ -21,7 +21,7 @@ export default {
     data() {
         return {
             file: [],
-            isShow:true
+            isShow: true,
         };
     },
     props: {
@@ -39,17 +39,14 @@ export default {
                     cancelButtonText: '取消',
                 })
                     .then(({ value }) => {
-                         this.$emit('sendImgMsg', data.url);
-                         this.isShow=false
+                        this.$emit('sendImgMsg', data.url);
+                        this.isShow = false;
                         this.$notify.success('图片发送成功');
-
                     })
                     .catch(() => {
-                          this.isShow=false
-                             this.$notify.error('消息发送失败');
-
+                        this.isShow = false;
+                        this.$notify.error('消息发送失败');
                     });
-             
             } else {
                 this.$notify.error('图片上传失败');
             }

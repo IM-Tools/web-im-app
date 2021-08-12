@@ -11,10 +11,16 @@ export function setGoodsTop(userList, data) {
         userList.forEach((value, key) => {
             if (value.id == data.to_id) {
                 userList[key].send_time = moment().format('H:mm')
-                if(data.msg_type==1){
+                if (data.msg_type == 1) {
                     userList[key].send_msg = data.msg
-                }else{
-                    userList[key].send_msg='表情..'
+                } else if (data.msg_type == 2) {
+                    userList[key].send_msg = '图片..'
+                }
+                else if (data.msg_type == 4) {
+                    userList[key].send_msg = '语音..'
+                }
+                else {
+                    userList[key].send_msg = '表情..'
                 }
                 newUserList.push(userList[key]);
                 userList.splice(key, 1)
@@ -26,10 +32,16 @@ export function setGoodsTop(userList, data) {
             if (value.id == data.from_id) {
                 userList[key].msg_total = Number(userList[key].msg_total) + 1
                 userList[key].send_time = moment().format('H:mm')
-                if(data.msg_type==1){
+                if (data.msg_type == 1) {
                     userList[key].send_msg = data.msg
-                }else{
-                    userList[key].send_msg='表情..'
+                } else if (data.msg_type == 2) {
+                    userList[key].send_msg = '图片..'
+                }
+                else if (data.msg_type == 4) {
+                    userList[key].send_msg = '语音..'
+                }
+                else {
+                    userList[key].send_msg = '表情..'
                 }
                 newUserList.push(userList[key]);
                 userList.splice(key, 1)
@@ -68,21 +80,21 @@ export function setUsersStatus(userList, id, status) {
     });
     return userList
 }
-export function judgeData(content){
-   if( content.indexOf("http://")>-1 ||  content.indexOf("https://")>-1) {
-       if( content.indexOf("png")>-1 ||  content.indexOf("jpeg")>-1 || content.indexOf("jpg")>-1 || content.indexOf("gif")>-1){
-           return 2
-       }else{
-           return 3
-       }
-   }else{
-       return 1;
-   }
+export function judgeData(content) {
+    if (content.indexOf("http://") > -1 || content.indexOf("https://") > -1) {
+        if (content.indexOf("png") > -1 || content.indexOf("jpeg") > -1 || content.indexOf("jpg") > -1 || content.indexOf("gif") > -1) {
+            return 2
+        } else {
+            return 3
+        }
+    } else {
+        return 1;
+    }
 }
-export function DataBindA(content){
+export function DataBindA(content) {
     var regexp = /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|\&|-)+)/g;
-    content = content.replace(regexp, function($url){
-     return "<a href='" + $url + "' target='_blank'>" + $url + "</a>";
+    content = content.replace(regexp, function ($url) {
+        return "<a href='" + $url + "' target='_blank'>" + $url + "</a>";
     });
     return content
 }
