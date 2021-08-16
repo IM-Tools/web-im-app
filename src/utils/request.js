@@ -5,8 +5,8 @@ import { ElNotification } from 'element-plus';
 import store from '../store/index';
 
 const service = axios.create({
-    //baseURL: import.meta.env.VITE_APP_BASE_API,
-    baseURL: '/api',
+    baseURL: import.meta.env.VITE_APP_BASE_API,
+    //baseURL: '/api',
     timeout: 10000 // request timeout
 });
 
@@ -47,7 +47,7 @@ service.interceptors.response.use(
                     });
                     break;
                 case 403:
-                    console.log(error.response)
+                
                     Cookies.remove('token');
                     Cookies.remove('auth');
                     ElNotification.error({

@@ -110,10 +110,10 @@ export default {
             });
         },
         weiboLogin() {
-            window.location.href = 'https://api.weibo.com/oauth2/authorize?client_id=1949419161&redirect_uri=http://im.pltrue.top/login';
+            window.location.href = 'https://api.weibo.com/oauth2/authorize?client_id=1949419161&redirect_uri='+import.meta.env.VITE_APP_WB_REDIRECT_URL;
         },
         onSubmit() {
-            console.log('submit!');
+          
         },
         auth(code) {
             this.loginLoading = true;

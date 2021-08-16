@@ -61,7 +61,7 @@ export default {
             this.list = newList;
         },
         createGroup() {
-         console.log(this.multipleSelection)
+        
          if(this.multipleSelection.length==0){
            ElNotification({
              type:"warning",

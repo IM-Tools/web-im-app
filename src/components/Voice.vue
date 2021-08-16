@@ -60,7 +60,7 @@ export default {
             
             this.recorderObj.stop();
             let wavb = this.recorderObj.getWAVBlob();
-            console.log(wavb);
+        
             var formData = new FormData();
             var time = new Date();
             var timestamp = Date.parse(time);
@@ -106,7 +106,7 @@ export default {
         downVoice() {
             //获取下载文件
             this.recorderObj.downloadWAV();
-            console.log('下载');
+         
         },
     },
 };

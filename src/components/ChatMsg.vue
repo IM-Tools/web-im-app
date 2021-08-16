@@ -6,7 +6,8 @@
             <p v-if="list.status" class="msg-content-left">
                 <img class="img-left" :src="selectUser.avatar" />
                 <span v-if="list.msg_type == 1">
-                    <p v-html="list.msg"></p>
+                    <!-- <p v-html="list.msg"></p> -->
+                    {{list.msg}}&nbsp;&nbsp;&nbsp;&nbsp;<i style="font-size:8px">{{list.created_at}}</i>
                 </span>
                 <a :href="list.msg" target="_blank"><img v-if="list.msg_type == 2" :src="list.msg" class="im-gif" /></a>
                 <span v-if="list.msg_type == 3">
@@ -18,7 +19,8 @@
             </p>
             <p v-else class="msg-content-right">
                 <span v-if="list.msg_type == 1">
-                    <p v-html="list.msg"></p>
+                    <!-- <p v-html="list.msg"></p> -->
+                        {{list.msg}}&nbsp;&nbsp;&nbsp;&nbsp;<i style="font-size:8px">{{list.created_at}}</i>
                 </span>
                 <a :href="list.msg" target="_blank"><img v-if="list.msg_type == 2" :src="list.msg" class="im-gif" /></a>
                 <span v-if="list.msg_type == 3">

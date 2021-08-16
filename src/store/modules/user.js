@@ -20,7 +20,6 @@ const actions = {
         }
         GetGoodData(params).then(response => {
             const { code, data } = response;
-            console.log(response);
             commit('setGoodslist', data.list);
         });
     },
@@ -58,7 +57,7 @@ const mutations = {
         var lets = data.length
         data.forEach((value, key) => {
             if(lets!=key+1){
-                console.log(value)
+              
                 var last_time = new Date(value.created_at)
                 var next_time = new Date(data[key+1].created_at)
                 last_time = last_time.getTime(last_time)

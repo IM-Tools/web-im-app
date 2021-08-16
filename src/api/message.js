@@ -16,7 +16,7 @@ export function GetGoodData(query) {
 }
 
 export function GetMsgList(query) {
-    console.log("测试",query)
+   
     return request({
         url: '/InformationHistory',
         method: 'get',

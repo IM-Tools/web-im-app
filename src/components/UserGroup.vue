@@ -1,7 +1,7 @@
 <template>
     <el-main class="fa-main-users" style="color: #fff">
         <el-main>
-            <div class="fa-users" v-for="list in goodslist" :key="list.id" @click="selectUser(list)">
+            <div class="fa-users" v-for="(list, index) in goodslist" :key="list.id" @click="selectUser(list, index)" v-bind:class="{ fa_user_select: index == isSelect }">
                 <div class="img-list">
                     <i v-if="list.msg_total" class="web-wechat-message">{{ list.msg_total }}</i>
                     <img :class="list.status == 0 ? 'offline-img' : ''" :src="list.avatar" />
@@ -16,10 +16,11 @@
 <script>
 export default {
     name: 'UserGroup',
-    data(){
+    data() {
         return {
-            isActive:false
-        }
+            isActive: false,
+            isSelect: -1,
+        };
     },
     props: {
         goodslist: {
@@ -32,9 +33,10 @@ export default {
         },
     },
     methods: {
-        selectUser(user) {
-            this.isActive=
-            this.$emit('setUser', user);
+        selectUser(user, index) {
+            this.isSelect = index;
+            console.log(index,'测试--')
+            this.isActive = this.$emit('setUser', user);
         },
     },
 };
@@ -79,8 +81,11 @@ export default {
 .fa-users:hover {
     background-color: #454b55;
 }
-.fa-user-select{
+
+.fa_user_select {
     background-color: #454b55;
+      
+    border-left: 2px solid #66b1ff;
 }
 .fa-main-users {
     padding: 10px;

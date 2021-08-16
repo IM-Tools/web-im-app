@@ -17,7 +17,7 @@ module.exports = {
         open: true,
         https: false,
         proxy:{
-            '/testupload':'https://sm.ms/',
+           
             '/api':'http://127.0.0.1:9502/'
         }
     },

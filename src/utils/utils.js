@@ -20,7 +20,7 @@ export function setGoodsTop(userList, data) {
                     userList[key].send_msg = '语音..'
                 }
                 else {
-                    userList[key].send_msg = '表情..'
+                    userList[key].send_msg = data.msg
                 }
                 newUserList.push(userList[key]);
                 userList.splice(key, 1)
@@ -41,7 +41,7 @@ export function setGoodsTop(userList, data) {
                     userList[key].send_msg = '语音..'
                 }
                 else {
-                    userList[key].send_msg = '表情..'
+                    userList[key].send_msg = data.msg
                 }
                 newUserList.push(userList[key]);
                 userList.splice(key, 1)

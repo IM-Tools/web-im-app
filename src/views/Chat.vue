@@ -11,7 +11,6 @@
                             <el-dropdown-item><i class="el-icon-user"></i>个人信息</el-dropdown-item>
                             <el-dropdown-item @click="dialog = true"><i class="el-icon-search"></i>好友搜索</el-dropdown-item>
                             <el-dropdown-item @click="GoodFriendDialogVisible = true"><i class="el-icon-plus"></i>创建群聊</el-dropdown-item>
-                            <!-- <el-dropdown-item @click="CircleVisible = true"><i class="el-icon-bangzhu"></i>我的圈子</el-dropdown-item> -->
                             <el-dropdown-item @click="logout"><i class="el-icon-unlock"></i>退出登录</el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
@@ -21,7 +20,19 @@
             <el-header class="im-user-header">
                 <el-input prefix-icon="el-icon-search" @mouseleave="searchGoods" class="from-search" placeholder="搜索" v-model="searchValue" size="small"> </el-input>
             </el-header>
-            <UserGroup @setUser="selectUserAction" :forUser="forUser" :goodslist="goodslist"></UserGroup>
+            <!-- <el-header class="im-user-icon">
+                <el-row :gutter="24">
+                    <el-col :span="12"
+                        ><div class="grid-content bg-purple">
+                            <i @click="chatBool == false" class="el-icon-user-solid" style="font-size: 30px; color: #fff"></i></div
+                    ></el-col>
+                    <el-col :span="12"
+                        ><div class="grid-content bg-purple-light">
+                            <i @click="chatBool == true" class="el-icon-chat-square" style="font-size: 30px; color: #fff"></i></div
+                    ></el-col>
+                </el-row>
+            </el-header> -->
+            <UserGroup v-if="!chatBool" @setUser="selectUserAction" :forUser="forUser" :goodslist="goodslist"></UserGroup>
         </el-aside>
         <el-container>
             <el-header class="im-msg-header">
@@ -35,7 +46,7 @@
                 <el-footer class="app-msg-footer" v-if="selectUser.name">
                     <UploadImg @sendImgMsg="sendImgMsg" :dialogImageUrl="dialogImageUrl"></UploadImg>
                     <Voice @sendVoiceMsg="sendVoiceMsg"></Voice>
-                    <discord-picker :key="gifKey" input :value="value" @keyup.enter="sendMsg" @update:value="value = $event" @emoji="setEmoji" :placeholder="placeholder" />
+                    <discord-picker :showUpload="false" gifFormat="http://www.baidu.com/" input :value="value" @keyup.enter="sendMsg" @update:value="value = $event" @emoji="setEmoji" :placeholder="placeholder" />
                 </el-footer>
             </el-main>
         </el-container>
@@ -49,12 +60,10 @@ import DiscordPicker from 'vue3-discordpicker';
 import Cookies from 'js-cookie';
 import ChatMsg from '../components/ChatMsg.vue';
 import UserGroup from '../components/UserGroup.vue';
-
 import GoodFriend from '../components/GoodFriend.vue';
 import CircleFiends from '../components/CircleFiends.vue';
 import UploadImg from '../components/UploadImg.vue';
 import Voice from '../components/Voice.vue';
-
 import moment from '../utils/moment';
 import { judgeData, DataBindA } from '../utils/utils';
 moment.locale('zh-cn');
@@ -62,6 +71,7 @@ export default {
     components: { DiscordPicker, GoodFriend, CircleFiends, ChatMsg, UserGroup, UploadImg, Voice },
     data() {
         return {
+            chatBool: false,
             dialogImageUrl: '',
             dialogVisibleImg: false,
             msg_type: 1,
@@ -183,7 +193,7 @@ export default {
         sendVoiceMsg(url) {
             this.msg_type = 4;
             this.value = url;
-             console.log(url)
+
             this.sendMsg();
         },
         sendMsg() {
@@ -235,8 +245,14 @@ export default {
             }
 
             this.value = '';
-            this.socket.send('HeartBeat');
-            this.send(this.msgForm);
+            try {
+                console.log(this.socket)
+                this.socket.send('HeartBeat');
+                this.send(this.msgForm);
+            } catch (error) {
+                this.$notify.error("网络连接已经断开")
+                return
+            }
             this.$store.commit('user/setMsg', this.msgForm);
             this.msg_type = 1;
             setTimeout(() => {
@@ -249,7 +265,6 @@ export default {
             this.value = value;
         },
         init: function () {
-            console.log(this.ws);
             if (typeof WebSocket === 'undefined') {
                 this.$notify({
                     title: '提醒',
@@ -273,7 +288,6 @@ export default {
 
                     this.socket.onopen = this.onopen;
                 } catch (error) {
-                    console.log(error);
                     this.$notify({
                         title: 'error',
                         message: '客户端链接失败',
@@ -284,17 +298,17 @@ export default {
         },
         onmessage(event) {
             this.reset();
-            this.start();
+           
         },
         onopen: function () {
             this.reset();
-            this.start();
+        
         },
         open: function (msg) {
             console.log(msg);
         },
         error: function () {
-            this.socket = null;
+            this.socket=null;
             this.$notify.error('连接异常请检查网络');
         },
         getMessage: function (msg) {
@@ -318,7 +332,8 @@ export default {
             this.socket.send(JSON.stringify(params));
         },
         close: function () {
-            console.log('socket已经关闭');
+            console.log('断开')
+            //this.reset()
         },
         handleFriendDialogClose(done) {
             this.GoodFriendDialogVisible = false;
@@ -442,12 +457,21 @@ export default {
         background-color: #2e3238;
     }
     .im-msg-header {
+        height: 40px;
         border-bottom: 1px solid #d6d6d6;
         display: flex;
         text-align: center;
         font-size: 12px;
         justify-content: center;
         align-items: center;
+    }
+    .im-user-icon {
+        background-color: hsl(216, 10%, 20%);
+        font-size: 12px;
+        line-height: 40px;
+        i {
+            border: 1px solid #2e3238;
+        }
     }
     .img-msg-main {
         background-color: rgb(236 235 235);
