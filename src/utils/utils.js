@@ -1,4 +1,56 @@
 import moment from 'moment'
+
+/**
+ * 设置用户信息
+ * @param {*} data 
+ * @returns 
+ */
+
+export function setGroupUserLists(data){
+    let groupMap = {};
+    data.forEach((item)=>{
+        let users={};
+        item.users.forEach((user)=>{
+            users[user.user_id]=user
+        })
+       
+        groupMap[item.id]=users
+    })
+  
+    return groupMap;
+}
+
+
+/**
+ * 
+ * 根据消息更新好友列表
+ * @param {*} userList 
+ * @param {*} id 
+ */
+ export function setGroupsTop(userList, data) {
+    var newUserList = [];
+    userList.forEach((value, key) => {
+        if (value.id == data.to_id) {
+            userList[key].send_time = moment().format('H:mm')
+            if (data.msg_type == 1) {
+                userList[key].send_msg = data.msg
+            } else if (data.msg_type == 2) {
+                userList[key].send_msg = '图片..'
+            }
+            else if (data.msg_type == 4) {
+                userList[key].send_msg = '语音..'
+            }
+            else {
+                userList[key].send_msg = data.msg
+            }
+            newUserList.push(userList[key]);
+            userList.splice(key, 1)
+            userList = newUserList.concat(userList);
+        }
+    });
+    return userList
+}
+
 /**
  * 
  * 根据消息更新好友列表

@@ -20,37 +20,61 @@
             <el-header class="im-user-header">
                 <el-input prefix-icon="el-icon-search" @mouseleave="searchGoods" class="from-search" placeholder="搜索" v-model="searchValue" size="small"> </el-input>
             </el-header>
-            <!-- <el-header class="im-user-icon">
+            <el-header class="im-user-icon">
                 <el-row :gutter="24">
                     <el-col :span="12"
-                        ><div class="grid-content bg-purple">
-                            <i @click="chatBool == false" class="el-icon-user-solid" style="font-size: 30px; color: #fff"></i></div
+                        ><div class="grid-content bg-purple" v-bind:class="{ is_guttered_class: isSelect == 1 }" @click="this.isSelect = 1">
+                            <i class="el-icon-user-solid" style="font-size: 20px; color: #fff"></i></div
                     ></el-col>
                     <el-col :span="12"
-                        ><div class="grid-content bg-purple-light">
-                            <i @click="chatBool == true" class="el-icon-chat-square" style="font-size: 30px; color: #fff"></i></div
+                        ><div class="grid-content bg-purple-light" v-bind:class="{ is_guttered_class: isSelect == 2 }" @click="this.isSelect = 2">
+                            <i class="el-icon-chat-square" style="font-size: 20px; color: #fff"></i></div
                     ></el-col>
                 </el-row>
-            </el-header> -->
-            <UserGroup v-if="!chatBool" @setUser="selectUserAction" :forUser="forUser" :goodslist="goodslist"></UserGroup>
+            </el-header>
+            <UserGroup v-if="isSelect == 1" @setUser="selectUserAction" :forUser="forUser" :goodslist="goodslist"></UserGroup>
+            <ChatGroup v-if="isSelect == 2" @setUser="selectUserAction" :forUser="forUser" :grouplist="grouplist"></ChatGroup>
         </el-aside>
         <el-container>
-            <el-header class="im-msg-header">
+            <el-header class="im-msg-header" v-if="isSelect == 1">
                 {{ selectUser.name ? selectUser.name : '未选择好友' }}
             </el-header>
+            <el-header class="im-msg-header" v-if="isSelect == 2">
+                {{ selectUser.group_name ? selectUser.group_name : '未选择群组' }}
+                <i v-if="isShowGroupUser == 1" @click="showGroupUser" class="el-icon-caret-bottom"></i>
+                <i v-if="isShowGroupUser == 2" @click="showGroupUser" class="el-icon-caret-top"></i>
+            </el-header>
+            <el-collapse-transition>
+                <div v-show="isShowGroupUser == 2" class="show-users group-show-user animate__animated animate__ffadeInDown">
+                    <div class="group-user">
+                        <i class="el-icon-plus"></i>
+                        <p class="nickname"></p>
+                    </div>
+                    <div class="group-user">
+                        <i class="el-icon-minus"></i>
+                        <p class="nickname"></p>
+                    </div>
+                    <div v-for="(value, key) in selectUser.users" class="group-user" :key="key">
+                        <img :src="value.avatar" />
+                        <p class="nickname">{{ value.remark }}</p>
+                    </div>
+                </div>
+            </el-collapse-transition>
             <el-main class="img-msg-main">
                 <div v-if="isMenu == false" class="el-backtop" @click="leftMenu">
-                    <i class="el-icon-caret-left"></i>
+                    <i @click="showGroupUser" class="el-icon-caret-left"></i>
                 </div>
-                <ChatMsg :msgList="msgData" :toUser="toUser" :selectUser="selectUser" :users="users"></ChatMsg>
-                <el-footer class="app-msg-footer" v-if="selectUser.name">
+                <ChatMsg v-if="isSelect == 1" :msgList="msgData" :toUser="toUser" :selectUser="selectUser" :users="users"></ChatMsg>
+                <ChatGroupMsg v-if="isSelect == 2" :msgList="groupMsgData" :toUser="toUser" :selectUser="selectUser" :users="users"></ChatGroupMsg>
+
+                <el-footer class="app-msg-footer" v-if="selectUser.id">
                     <UploadImg @sendImgMsg="sendImgMsg" :dialogImageUrl="dialogImageUrl"></UploadImg>
                     <Voice @sendVoiceMsg="sendVoiceMsg"></Voice>
-                    <discord-picker :showUpload="false" gifFormat="http://www.baidu.com/" input :value="value" @keyup.enter="sendMsg" @update:value="value = $event" @emoji="setEmoji" :placeholder="placeholder" />
+                    <discord-picker :key="gifKey" input :value="value" @keyup.enter="sendMsg" @update:value="value = $event" @emoji="setEmoji" :placeholder="placeholder" />
                 </el-footer>
             </el-main>
         </el-container>
-        <GoodFriend :GoodFriendDialogVisible="GoodFriendDialogVisible" :before-close="handleFriendDialogClose"></GoodFriend>
+        <GoodFriend @setChatGroup="setChatGroup" :GoodFriendDialogVisible="GoodFriendDialogVisible" :before-close="handleFriendDialogClose"></GoodFriend>
         <CircleFiends :CircleVisible="CircleVisible" :before-close="handleFriendDialogClose"></CircleFiends>
     </el-container>
 </template>
@@ -59,18 +83,24 @@ import { mapState, mapActions } from 'vuex';
 import DiscordPicker from 'vue3-discordpicker';
 import Cookies from 'js-cookie';
 import ChatMsg from '../components/ChatMsg.vue';
+import ChatGroupMsg from '../components/ChatGroupMsg.vue';
+//
 import UserGroup from '../components/UserGroup.vue';
 import GoodFriend from '../components/GoodFriend.vue';
 import CircleFiends from '../components/CircleFiends.vue';
 import UploadImg from '../components/UploadImg.vue';
+import ChatGroup from '../components/ChatGroup.vue';
 import Voice from '../components/Voice.vue';
 import moment from '../utils/moment';
 import { judgeData, DataBindA } from '../utils/utils';
 moment.locale('zh-cn');
 export default {
-    components: { DiscordPicker, GoodFriend, CircleFiends, ChatMsg, UserGroup, UploadImg, Voice },
+    components: { DiscordPicker, GoodFriend, CircleFiends, ChatMsg, UserGroup, UploadImg, Voice, ChatGroup, ChatGroupMsg },
     data() {
         return {
+            isShowGroupUser: 1,
+            activeNames: ['1'],
+            isSelect: 1,
             chatBool: false,
             dialogImageUrl: '',
             dialogVisibleImg: false,
@@ -102,6 +132,7 @@ export default {
                 status: 0,
                 to_id: '',
                 msg_type: 1, //1 文本消息 2 图片
+                channel_type: 1,
             },
         };
     },
@@ -110,19 +141,46 @@ export default {
         auth: state => state.auth.auth,
         goodslist: state => state.user.goodslist,
         msgData: state => state.user.msgData,
+        groupMsgData: state => state.user.groupMsgData,
+        grouplist: state => state.user.grouplist,
     }),
     created() {
         this.init();
         this.onGetgoodlist();
+        this.onGetGroupList();
         this.userList = this.goodslist;
     },
     methods: {
-        ...mapActions('user', ['onGetgoodlist', 'onGetMsgList', 'onReadMessage']),
+        setChatGroup() {
+            this.GoodFriendDialogVisible = false;
+            this.onGetGroupList();
+        },
+        showGroupUser() {
+            if (this.isShowGroupUser == 1) {
+                this.isShowGroupUser = 2;
+            } else {
+                this.isShowGroupUser = 1;
+            }
+        },
+        ...mapActions('user', ['onGetgoodlist', 'onGetMsgList', 'onReadMessage', 'onGetGroupList']),
+        // ...mapActions('group', ['onGetGroupList']),
+
+        selectGroup(index) {
+            //  this.isShowGroupUser = index;
+            this.isSelect = index;
+            console.log(this.isSelect);
+        },
         selectUserAction(data) {
             this.selectUser = data;
             this.toUser = true;
-            this.$store.commit('user/clearMsg', { id: data.id });
-            this.getMsgList({ to_id: data.id });
+            if (Number(this.isSelect) == 1) {
+                this.$store.commit('user/clearMsg', { id: data.id });
+                this.getMsgList({ to_id: data.id, channel_type: Number(this.isSelect) });
+            } else {
+                this.$store.commit('user/clearGroupMsg', { id: data.id });
+                this.getMsgList({ to_id: data.id, channel_type: Number(this.isSelect) });
+            }
+
             this.onReadMessage({ to_id: data.id });
             if (window.innerWidth < 815) {
                 this.isMenu = false;
@@ -145,12 +203,21 @@ export default {
             this.userList = newList;
         },
         refreshUser() {
-            this.onGetgoodlist();
-            this.$notify({
-                title: '提醒',
-                message: '刷新好友列表成功',
-                type: 'success',
-            });
+            if (this.isSelect == 1) {
+                this.onGetgoodlist();
+                this.$notify({
+                    title: '提醒',
+                    message: '刷新好友列表成功',
+                    type: 'success',
+                });
+            } else {
+                this.onGetGroupList();
+                this.$notify({
+                    title: '提醒',
+                    message: '刷新群聊列表成功',
+                    type: 'success',
+                });
+            }
         },
         leftMenu() {
             this.isMenu = true;
@@ -225,10 +292,14 @@ export default {
                 this.msgForm = Object.assign(
                     {},
                     {
+                        status: 0,
                         from_id: this.users.id,
                         msg: this.value,
                         to_id: this.selectUser.id,
                         msg_type: this.msg_type,
+                        channel_type: Number(this.isSelect),
+                        status: 0,
+                        users: [],
                     }
                 );
                 this.msg_type = 1;
@@ -236,24 +307,33 @@ export default {
                 this.msgForm = Object.assign(
                     {},
                     {
+                        status: 0,
                         from_id: this.users.id,
                         msg: DataBindA(this.value),
                         to_id: this.selectUser.id,
                         msg_type: judgeData(this.value),
+                        channel_type: Number(this.isSelect),
+                        users: [],
                     }
                 );
             }
 
             this.value = '';
             try {
-                console.log(this.socket)
+                console.log(this.socket);
                 this.socket.send('HeartBeat');
                 this.send(this.msgForm);
             } catch (error) {
-                this.$notify.error("网络连接已经断开")
-                return
+                this.$notify.error('网络连接已经断开');
+                return;
             }
-            this.$store.commit('user/setMsg', this.msgForm);
+            if (this.msgForm.channel_type == 1) {
+                this.$store.commit('user/setMsg', this.msgForm);
+            } else {
+                console.log(this.msgForm);
+                //this.$store.commit('user/setGroupMsg', this.msgForm);
+            }
+
             this.msg_type = 1;
             setTimeout(() => {
                 var ele = document.getElementById('msgDiv');
@@ -298,17 +378,15 @@ export default {
         },
         onmessage(event) {
             this.reset();
-           
         },
         onopen: function () {
             this.reset();
-        
         },
         open: function (msg) {
             console.log(msg);
         },
         error: function () {
-            this.socket=null;
+            this.socket = null;
             this.$notify.error('连接异常请检查网络');
         },
         getMessage: function (msg) {
@@ -321,7 +399,15 @@ export default {
                     break;
                 case 200:
                     //拿到相关数据
-                    this.$store.commit('user/setMsg', { msg: data.msg, from_id: data.from_id, to_id: data.to_id, status: 1, msg_type: data.msg_type });
+                    if (data.channel_type == 1) {
+                        this.$store.commit('user/setMsg', { msg: data.msg, from_id: data.from_id, to_id: data.to_id, status: 1, msg_type: data.msg_type, status: 1 });
+                    } else {
+                        if (this.users.id == data.from_id) {
+                            this.$store.commit('user/setGroupMsg', { msg: data.msg, from_id: data.from_id, to_id: data.to_id, msg_type: data.msg_type, status: 0, users: [] });
+                        } else {
+                            this.$store.commit('user/setGroupMsg', { msg: data.msg, from_id: data.from_id, to_id: data.to_id, msg_type: data.msg_type, status: 1, users: [] });
+                        }
+                    }
                     break;
                 case 5000:
                     this.$store.commit('user/setOffline', data);
@@ -332,7 +418,7 @@ export default {
             this.socket.send(JSON.stringify(params));
         },
         close: function () {
-            console.log('断开')
+            console.log('断开');
             //this.reset()
         },
         handleFriendDialogClose(done) {
@@ -455,6 +541,39 @@ export default {
         text-align: right;
         font-size: 12px;
         background-color: #2e3238;
+    }
+    .group-show-user {
+        background-color: #ecebeb;
+        .group-user {
+            width: 67px;
+            height: 75px;
+            float: left;
+            padding: 6px;
+            margin: 5px;
+        }
+        .nickname {
+            color: #888;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            word-wrap: normal;
+            font-size: 12px;
+            margin-left: -8px;
+            vertical-align: middle;
+        }
+        img {
+            width: 55px;
+            height: 55px;
+            margin-right: 0.25em;
+        }
+        i {
+            font-size: 55px;
+            align-items: center;
+            width: 55px;
+            height: 55px;
+            margin-right: 0.25em;
+            border: 1px dashed #9c9a9a;
+        }
     }
     .im-msg-header {
         height: 40px;

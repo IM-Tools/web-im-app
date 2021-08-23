@@ -203,8 +203,26 @@ img {
     }
 }
 .is-guttered{
-    border: 1px solid #2e3238 m !important;
+    border: 0px solid #2e3238 m !important;
 }
 .is-guttered :hover{
-    background-color: #26292e !important;
+    background-color: #454b55 !important;
+    border: none !important;
 }
+.is_guttered_class {
+    background-color: #454b55 !important;
+    border: none !important;
+}
+.im-container .im-user-icon i {
+    border: none !important;
+}
+// .show-users-according{
+//     height:0px;
+//     padding: 0px;
+//     border-bottom: 0px solid #cecdcd;
+// }
+// .show-users{
+//     // height:30%;
+//     padding: 10px;
+//     border-bottom: 1px solid #cecdcd;
+// }

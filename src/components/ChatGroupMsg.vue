@@ -1,96 +1,71 @@
 <template>
-    <el-main class="fa-main-users" style="color: #fff">
-        <el-main>
-            <div class="fa-users" v-for="(list, index) in grouplist" :key="list.id" @click="selectUser(list, index)" v-bind:class="{ is_guttered_class: index == isSelect }">
-                <div class="img-list">
-                    <i v-if="list.msg_total" class="web-wechat-message">{{ list.msg_total }}</i>
-                    <img :src="list.group_avatar" />
-                </div>
-                <span>{{ list.group_name }}</span>
-                <p class="p-msg">{{ list.send_msg }}</p>
-                <span class="msg-time">{{ list.send_time }}</span>
-            </div>
-        </el-main>
+    <el-main id="msgDiv" width="" class="app-msg">
+        <span v-if="!toUser" style="font-size: 12px"><i class="el-icon-chat-dot-round"></i>请选择聊天</span>
+        <div v-else :key="list.id" v-for="list in msgList">
+            <i v-if="list.time_status" style="font-size: 10px">{{ renderTime(list.created_at) }}</i>
+            <p v-if="list.status" class="msg-content-left">
+                <img class="img-left" :src="list.users.avatar" />
+                <span v-if="list.msg_type == 1">
+                    <!-- <p v-html="list.msg"></p> -->
+                    {{list.msg}}&nbsp;&nbsp;&nbsp;&nbsp;<i style="font-size:8px">{{list.created_at}}</i>
+                </span>
+                <a :href="list.msg" target="_blank"><img v-if="list.msg_type == 2" :src="list.msg" class="im-gif" /></a>
+                <span v-if="list.msg_type == 3">
+                    <p v-html="list.msg"></p>
+                </span>
+                <audio class="audio-left" v-if="list.msg_type == 4" controls>
+                    <source :src="list.msg" type="audio/mpeg" />
+                </audio>
+            </p>
+            <p v-else class="msg-content-right">
+                <span v-if="list.msg_type == 1">
+                    <!-- <p v-html="list.msg"></p> -->
+                        {{list.msg}}&nbsp;&nbsp;&nbsp;&nbsp;<i style="font-size:8px">{{list.created_at}}</i>
+                </span>
+                <a :href="list.msg" target="_blank"><img v-if="list.msg_type == 2" :src="list.msg" class="im-gif" /></a>
+                <span v-if="list.msg_type == 3">
+                    <p v-html="list.msg"></p>
+                </span>
+                <audio class="audio-right" v-if="list.msg_type == 4" controls>
+                    <source :src="list.msg" type="audio/mpeg" />
+                </audio>
+                <img class="img-right" :src="users.avatar" />
+            </p>
+        </div>
     </el-main>
 </template>
-
 <script>
 export default {
-    name: 'ChatGroup',
+    name: 'ChatGroupMsg',
     data() {
-        return {
-            isActive: false,
-            isSelect: -1,
-        };
+        return {};
     },
     props: {
-        grouplist: {
+        msgList: {
             type: Array,
             default: [],
         },
-        forUser: {
+        toUser: {
+            type: Boolean,
+            default: false,
+        },
+        selectUser: {
             type: Array,
             default: [],
         },
-    },
-
-    methods: {
-        selectUser(user, index) {
-            this.isSelect = index;
-            this.isActive = this.$emit('setUser', user);
+        users: {
+            type: Array,
+            default: [],
         },
     },
 };
 </script>
 <style lang="scss" scoped>
-.el-main {
-    padding: 0px;
-}
-.fa-users {
-    position: relative;
-    padding: 10px;
-    display: flex;
-    height: 64px;
-    align-items: center;
-    justify-content: flex-start;
-    .img-list {
-        display: inline-block;
-        position: relative;
-    }
-    .p-msg {
-        font-size: 13px;
-        color: #989898;
-        position: absolute;
-        left: 60px;
-        bottom: 8px;
-        width: 150px;
-        text-align: left;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    span {
-        font-size: 12px;
-        padding-left: 10px;
-    }
-    .msg-time {
-        display: block;
-        position: absolute;
-        left: 190px;
-    }
-}
-.fa-users:hover {
-    background-color: #454b55;
-}
-
-.fa_user_select {
-    background-color: #454b55;
-
-    border-left: 2px solid #66b1ff;
-}
-.fa-main-users {
+.audio-right,
+.audio-left {
     padding: 10px;
 }
+
 .app-msg {
     background-color: rgb(236 235 235);
     height: 80%;
@@ -98,7 +73,6 @@ export default {
     .im-gif {
         max-height: 300px;
         max-width: 300px;
-
         box-shadow: 0 0px 0px 0 #a3b4bf;
         img {
             height: 100%;
@@ -121,7 +95,6 @@ export default {
         .img-left {
             width: 40px;
             height: 40px;
-
             box-shadow: 0 1px 10px 0 #a3b4bf;
         }
         span {
@@ -138,7 +111,6 @@ export default {
             display: inline-block;
             padding: 8px 10px;
             margin-top: 0;
-
             word-break: break-all;
             margin-left: 15px;
         }
@@ -159,7 +131,6 @@ export default {
             margin-left: -26px;
         }
     }
-
     .msg-content-right {
         padding: 5px 0px 5px 0px;
         justify-content: flex-end;
@@ -173,11 +144,9 @@ export default {
             box-shadow: 0 0px 0px 0 #a3b4bf;
             padding: 10px;
         }
-
         .img-right {
             width: 40px;
             height: 40px;
-
             box-shadow: 0 1px 10px 0 #a3b4bf;
         }
         span {
@@ -194,14 +163,11 @@ export default {
             display: inline-block;
             padding: 8px 10px;
             margin-top: 0;
-
             word-break: break-all;
             margin-right: 10px;
         }
         span::before {
             top: 11px;
-            //   left: 200px;
-            //   right: 440px;
             display: block;
             float: right;
             width: 0;
@@ -215,46 +181,5 @@ export default {
             margin-right: -25px;
         }
     }
-}
-
-.online-status {
-    /* display: flex; */
-    height: 7px;
-    width: 7px;
-    border-radius: 90%;
-    background-color: rgb(33, 185, 120) !important;
-    /* float: left; */
-    margin-left: 3px;
-}
-.web-wechat-message {
-    position: absolute;
-    background-color: #e62e2e;
-    cursor: pointer;
-    top: -6px;
-    right: -6px;
-    font-style: normal;
-    border-radius: 30%;
-    height: 15px;
-    width: 25px;
-    line-height: 15px;
-
-    text-align: center;
-    color: #fff;
-    font-size: 12px;
-}
-.offline-img {
-    -webkit-filter: grayscale(100%);
-    -moz-filter: grayscale(100%);
-    -ms-filter: grayscale(100%);
-    -o-filter: grayscale(100%);
-    filter: grayscale(100%);
-    filter: gray;
-}
-.offline-status {
-    background-color: gray !important;
-    height: 7px;
-    width: 7px;
-    border-radius: 90%;
-    margin-left: 3px;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
     <el-main class="fa-main-users" style="color: #fff">
         <el-main>
-            <div class="fa-users" v-for="(list, index) in goodslist" :key="list.id" @click="selectUser(list, index)" v-bind:class="{ fa_user_select: index == isSelect }">
+            <div class="fa-users" v-for="(list, index) in goodslist" :key="list.id" @click="selectUser(list, index)" v-bind:class="{ is_guttered_class: index == isSelect }">
                 <div class="img-list">
                     <i v-if="list.msg_total" class="web-wechat-message">{{ list.msg_total }}</i>
                     <img :class="list.status == 0 ? 'offline-img' : ''" :src="list.avatar" />
@@ -35,7 +35,6 @@ export default {
     methods: {
         selectUser(user, index) {
             this.isSelect = index;
-            console.log(index,'测试--')
             this.isActive = this.$emit('setUser', user);
         },
     },
@@ -123,12 +122,6 @@ export default {
 
             box-shadow: 0 1px 10px 0 #a3b4bf;
         }
-
-        // img {
-        //     box-shadow: 0 1px 10px 0 #a3b4bf;
-        //     height: 40px;
-        //     width: 40px;
-        // }
         span {
             max-width: 70%;
             border-radius: 3px;
@@ -178,11 +171,7 @@ export default {
             box-shadow: 0 0px 0px 0 #a3b4bf;
             padding: 10px;
         }
-        // img {
-        //     box-shadow: 0 1px 10px 0 #a3b4bf;
-        //     height: 40px;
-        //     width: 40px;
-        // }
+       
         .img-right {
             width: 40px;
             height: 40px;
