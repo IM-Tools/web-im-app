@@ -4,7 +4,9 @@
   "scripts": {
     "serve": "vite serve --mode development",
     "build": "vite build --mode production",
-    "dev": "vite --mode development"
+    "dev": "vite --mode development",
+    "electron_build": "electron-packager ./dist/ --platform=all --arch=x64 --icon=./src/assets/favicon.ico --overwrite",
+    "electron_build_mac": "electron-packager ./dist/ --platform=darwin --arch=x64 --icon=./src/assets/favicon.ico --overwrite"
   },
   "dependencies": {
     "@element-plus/icons": "0.0.11",
@@ -26,6 +28,8 @@
   },
   "devDependencies": {
     "@vue/compiler-sfc": "^3.2.1",
+    "electron": "^13.2.2",
+    "electron-packager": "^15.3.0",
     "node-sass": "^6.0.1",
     "sass": "^1.37.5",
     "sass-loader": "^12.1.0",

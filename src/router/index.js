@@ -27,9 +27,7 @@ const router = createRouter({
 });
 router.beforeEach((to, from, next) => {
     // 如果用户未能验证身份，则 `next` 会被调用两次
-  
     if (to.name !== 'Login' && Cookies.get('auth') == undefined) {
-       
         next({ name: 'Login' });
     }
     if (to.name == 'Login' && Cookies.get('auth') == 'true') {
