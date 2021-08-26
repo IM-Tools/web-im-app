@@ -57,8 +57,11 @@ export function setGroupUserLists(data){
  * @param {*} userList 
  * @param {*} id 
  */
+
 export function setGoodsTop(userList, data) {
+    
     var newUserList = [];
+
     if (data.status == 0) {
         userList.forEach((value, key) => {
             if (value.id == data.to_id) {

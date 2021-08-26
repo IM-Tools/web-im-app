@@ -328,10 +328,9 @@ export default {
                 return;
             }
             if (this.msgForm.channel_type == 1) {
-                this.$store.commit('user/setMsg', this.msgForm);
+                //this.$store.commit('user/setMsg', this.msgForm);
             } else {
                 console.log(this.msgForm);
-                //this.$store.commit('user/setGroupMsg', this.msgForm);
             }
 
             this.msg_type = 1;
@@ -390,17 +389,21 @@ export default {
             this.$notify.error('连接异常请检查网络');
         },
         getMessage: function (msg) {
+            console.log(msg);
             let data = JSON.parse(msg.data);
             const { code } = data;
             //监听消息 以及操作逻辑
             switch (code) {
+                case 401:
+                    this.$notify.error('禁止发送敏感词!');
+                    break;
                 case 1000:
                     this.$store.commit('user/setOnline', data);
                     break;
                 case 200:
                     //拿到相关数据
                     if (data.channel_type == 1) {
-                        this.$store.commit('user/setMsg', { msg: data.msg, from_id: data.from_id, to_id: data.to_id, status: 1, msg_type: data.msg_type, status: 1 });
+                        this.$store.commit('user/setMsg', { msg: data.msg, from_id: data.from_id, to_id: data.to_id, status: data.status, msg_type: data.msg_type });
                     } else {
                         if (this.users.id == data.from_id) {
                             this.$store.commit('user/setGroupMsg', { msg: data.msg, from_id: data.from_id, to_id: data.to_id, msg_type: data.msg_type, status: 0, users: [] });

@@ -3,7 +3,7 @@
         <span v-if="!toUser" style="font-size: 12px"><i class="el-icon-chat-dot-round"></i>请选择聊天</span>
         <div v-else :key="list.id" v-for="list in msgList">
             <i v-if="list.time_status" style="font-size: 10px">{{ renderTime(list.created_at) }}</i>
-            <p v-if="list.status" class="msg-content-left">
+            <p v-if="list.status==1" class="msg-content-left">
                 <img class="img-left" :src="selectUser.avatar" />
                 <span v-if="list.msg_type == 1">
                     <!-- <p v-html="list.msg"></p> -->
