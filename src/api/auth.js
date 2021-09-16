@@ -12,7 +12,7 @@ export function login(query) {
     return request({
         url: '/login',
         method: 'post',
-        data:qs.parse(query)
+        data:qs.stringify(query)
     });
 }
 

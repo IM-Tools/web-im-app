@@ -59,7 +59,7 @@ export function setGroupUserLists(data){
  */
 
 export function setGoodsTop(userList, data) {
-    
+
     var newUserList = [];
 
     if (data.status == 0) {
@@ -83,6 +83,7 @@ export function setGoodsTop(userList, data) {
             }
         });
     } else {
+        
         userList.forEach((value, key) => {
             if (value.id == data.from_id) {
                 userList[key].msg_total = Number(userList[key].msg_total) + 1

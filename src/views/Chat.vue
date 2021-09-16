@@ -9,7 +9,7 @@
                     <template #dropdown>
                         <el-dropdown-menu>
                             <el-dropdown-item><i class="el-icon-user"></i>个人信息</el-dropdown-item>
-                            <el-dropdown-item @click="dialog = true"><i class="el-icon-search"></i>好友搜索</el-dropdown-item>
+                            <el-dropdown-item @click="ChumAddVisible = true"><i class="el-icon-search"></i>添加好友</el-dropdown-item>
                             <el-dropdown-item @click="GoodFriendDialogVisible = true"><i class="el-icon-plus"></i>创建群聊</el-dropdown-item>
                             <el-dropdown-item @click="logout"><i class="el-icon-unlock"></i>退出登录</el-dropdown-item>
                         </el-dropdown-menu>
@@ -70,12 +70,14 @@
                 <el-footer class="app-msg-footer" v-if="selectUser.id">
                     <UploadImg @sendImgMsg="sendImgMsg" :dialogImageUrl="dialogImageUrl"></UploadImg>
                     <Voice @sendVoiceMsg="sendVoiceMsg"></Voice>
-                    <discord-picker :key="gifKey" input :value="value" @keyup.enter="sendMsg" @update:value="value = $event" @emoji="setEmoji" :placeholder="placeholder" />
+                    <discord-picker  input :value="value" @keyup.enter="sendMsg" @update:value="value = $event" @emoji="setEmoji" :placeholder="placeholder" />
+               
                 </el-footer>
             </el-main>
         </el-container>
         <GoodFriend @setChatGroup="setChatGroup" :GoodFriendDialogVisible="GoodFriendDialogVisible" :before-close="handleFriendDialogClose"></GoodFriend>
         <CircleFiends :CircleVisible="CircleVisible" :before-close="handleFriendDialogClose"></CircleFiends>
+        <Friend :ChumAddVisible="ChumAddVisible" :GoodFriendDialogVisible="GoodFriendDialogVisible" :before-close="handleFriendDialogClose"></Friend>
     </el-container>
 </template>
 <script>
@@ -90,14 +92,16 @@ import GoodFriend from '../components/GoodFriend.vue';
 import CircleFiends from '../components/CircleFiends.vue';
 import UploadImg from '../components/UploadImg.vue';
 import ChatGroup from '../components/ChatGroup.vue';
+import Friend from '../components/Friend.vue';
 import Voice from '../components/Voice.vue';
 import moment from '../utils/moment';
 import { judgeData, DataBindA } from '../utils/utils';
 moment.locale('zh-cn');
 export default {
-    components: { DiscordPicker, GoodFriend, CircleFiends, ChatMsg, UserGroup, UploadImg, Voice, ChatGroup, ChatGroupMsg },
+    components: { DiscordPicker, GoodFriend, CircleFiends, ChatMsg, UserGroup, UploadImg, Voice, ChatGroup, ChatGroupMsg, Friend },
     data() {
         return {
+            ChumAddVisible:false,
             isShowGroupUser: 1,
             activeNames: ['1'],
             isSelect: 1,
@@ -299,7 +303,7 @@ export default {
                         msg_type: this.msg_type,
                         channel_type: Number(this.isSelect),
                         status: 0,
-                        users: [],
+                      
                     }
                 );
                 this.msg_type = 1;
@@ -313,14 +317,14 @@ export default {
                         to_id: this.selectUser.id,
                         msg_type: judgeData(this.value),
                         channel_type: Number(this.isSelect),
-                        users: [],
+                      
                     }
                 );
             }
 
             this.value = '';
             try {
-                console.log(this.socket);
+               
                 this.socket.send('HeartBeat');
                 this.send(this.msgForm);
             } catch (error) {
@@ -330,7 +334,7 @@ export default {
             if (this.msgForm.channel_type == 1) {
                 //this.$store.commit('user/setMsg', this.msgForm);
             } else {
-                console.log(this.msgForm);
+              
             }
 
             this.msg_type = 1;
@@ -427,6 +431,7 @@ export default {
         handleFriendDialogClose(done) {
             this.GoodFriendDialogVisible = false;
             this.CircleVisible = false;
+            this.CircleVisible=false;
             done();
         },
     },

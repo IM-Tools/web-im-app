@@ -58,7 +58,6 @@ export default {
     },
     methods: {
         ...mapActions('auth', ['onLoginUser', 'onWeiboLogin']),
-
         login() {
             if (this.ruleForm.name.length < 3 || this.ruleForm.name.length > 20) {
                 this.$notify.warning('账号字符应该是3-20位之间');
