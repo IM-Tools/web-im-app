@@ -77,8 +77,39 @@ const mutations = {
         state.goodslist = data;
         localStorage.setItem('goodslist', JSON.stringify(data))
     },
+    setUserSelectStauts(state,id){
+        let datas = state.goodslist
+       
+        datas.forEach((value,key)=>{
+         
+             if(id==value.id) {
+                datas[key].is_guttered_class=1
+             }else{
+              
+                datas[key].is_guttered_class=0
+             }
+        })
+        state.goodslist = datas;
+        localStorage.setItem('goodslist', JSON.stringify(datas))
+   
+    },
+    setGroupSelectStauts(state,id){
+        let datas = state.grouplist
+       
+        datas.forEach((value,key)=>{
+         
+             if(id==value.id) {
+                datas[key].is_guttered_class=1
+             }else{
+              
+                datas[key].is_guttered_class=0
+             }
+        })
+        state.grouplist = datas;
+        localStorage.setItem('grouplist', JSON.stringify(datas))
+   
+    },
     setMsgData(state, data) {
-
         var lets = data.length
         data.forEach((value, key) => {
             if (lets != key + 1) {
@@ -96,10 +127,7 @@ const mutations = {
                 data[key].time_status = 0
             }
         });
-
         state.msgData = data;
-
-
     },
     setGroupMsgData(state, data) {
         var lets = data.length

@@ -1,7 +1,7 @@
 <template>
     <el-main class="fa-main-users" style="color: #fff">
         <el-main>
-            <div class="fa-users" v-for="(list, index) in goodslist" :key="list.id" @click="selectUser(list, index)" v-bind:class="{ is_guttered_class: index == isSelect }">
+            <div class="fa-users" :class="{'is_guttered_class':list.is_guttered_class}" v-for="(list, index) in goodslist" :key="list.id" @click="selectUser(list, index)">
                 <div class="img-list">
                     <i v-if="list.msg_total" class="web-wechat-message">{{ list.msg_total }}</i>
                     <img :class="list.status == 0 ? 'offline-img' : ''" :src="list.avatar" />
@@ -34,6 +34,7 @@ export default {
     },
     methods: {
         selectUser(user, index) {
+            this.$store.commit('user/setUserSelectStauts',user.id)
             this.isSelect = index;
             this.isActive = this.$emit('setUser', user);
         },

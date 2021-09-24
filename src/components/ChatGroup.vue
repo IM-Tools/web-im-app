@@ -1,7 +1,7 @@
 <template>
     <el-main class="fa-main-users" style="color: #fff">
         <el-main>
-            <div class="fa-users" v-for="(list, index) in grouplist" :key="list.id" @click="selectUser(list, index)" v-bind:class="{ is_guttered_class: index == isSelect }">
+            <div class="fa-users" :class="{'is_guttered_class':list.is_guttered_class}" v-for="(list, index) in grouplist" :key="list.id" @click="selectUser(list, index)" >
                 <div class="img-list">
                     <i v-if="list.msg_total" class="web-wechat-message">{{ list.msg_total }}</i>
                     <img :src="list.group_avatar" />
@@ -15,6 +15,7 @@
 </template>
 
 <script>
+
 export default {
     name: 'ChatGroup',
     data() {
@@ -23,6 +24,7 @@ export default {
             isSelect: -1,
         };
     },
+   
     props: {
         grouplist: {
             type: Array,
@@ -36,6 +38,7 @@ export default {
 
     methods: {
         selectUser(user, index) {
+            this.$store.commit('user/setGroupSelectStauts',user.id)
             this.isSelect = index;
             this.isActive = this.$emit('setUser', user);
         },

@@ -46,7 +46,6 @@
             </el-header>
             <el-collapse-transition>
                 <div v-show="isShowGroupUser == 2" class="show-users group-show-user animate__animated animate__ffadeInDown">
-                    <div class="group-user">
                         <i class="el-icon-plus"></i>
                         <p class="nickname"></p>
                     </div>
@@ -58,7 +57,6 @@
                         <img :src="value.avatar" />
                         <p class="nickname">{{ value.remark }}</p>
                     </div>
-                </div>
             </el-collapse-transition>
             <el-main class="img-msg-main">
                 <div v-if="isMenu == false" class="el-backtop" @click="leftMenu">
@@ -70,8 +68,7 @@
                 <el-footer class="app-msg-footer" v-if="selectUser.id">
                     <UploadImg @sendImgMsg="sendImgMsg" :dialogImageUrl="dialogImageUrl"></UploadImg>
                     <Voice @sendVoiceMsg="sendVoiceMsg"></Voice>
-                    <discord-picker  input :value="value" @keyup.enter="sendMsg" @update:value="value = $event" @emoji="setEmoji" :placeholder="placeholder" />
-               
+                    <discord-picker input :value="value" @keyup.enter="sendMsg" @update:value="value = $event" @emoji="setEmoji" :placeholder="placeholder" />
                 </el-footer>
             </el-main>
         </el-container>
@@ -101,7 +98,7 @@ export default {
     components: { DiscordPicker, GoodFriend, CircleFiends, ChatMsg, UserGroup, UploadImg, Voice, ChatGroup, ChatGroupMsg, Friend },
     data() {
         return {
-            ChumAddVisible:false,
+            ChumAddVisible: false,
             isShowGroupUser: 1,
             activeNames: ['1'],
             isSelect: 1,
@@ -172,7 +169,6 @@ export default {
         selectGroup(index) {
             //  this.isShowGroupUser = index;
             this.isSelect = index;
-            console.log(this.isSelect);
         },
         selectUserAction(data) {
             this.selectUser = data;
@@ -303,7 +299,6 @@ export default {
                         msg_type: this.msg_type,
                         channel_type: Number(this.isSelect),
                         status: 0,
-                      
                     }
                 );
                 this.msg_type = 1;
@@ -317,14 +312,12 @@ export default {
                         to_id: this.selectUser.id,
                         msg_type: judgeData(this.value),
                         channel_type: Number(this.isSelect),
-                      
                     }
                 );
             }
 
             this.value = '';
             try {
-               
                 this.socket.send('HeartBeat');
                 this.send(this.msgForm);
             } catch (error) {
@@ -334,7 +327,6 @@ export default {
             if (this.msgForm.channel_type == 1) {
                 //this.$store.commit('user/setMsg', this.msgForm);
             } else {
-              
             }
 
             this.msg_type = 1;
@@ -431,7 +423,7 @@ export default {
         handleFriendDialogClose(done) {
             this.GoodFriendDialogVisible = false;
             this.CircleVisible = false;
-            this.CircleVisible=false;
+            this.CircleVisible = false;
             done();
         },
     },
