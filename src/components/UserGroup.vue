@@ -1,4 +1,5 @@
 <template>
+<!-- 用户聊天列表 -->
     <el-main class="fa-main-users" style="color: #fff">
         <el-main>
             <div class="fa-users" :class="{'is_guttered_class':list.is_guttered_class}" v-for="(list, index) in goodslist" :key="list.id" @click="selectUser(list, index)">

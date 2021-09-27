@@ -1,6 +1,7 @@
 <template>
+<!-- 群聊信息展示 -->
     <el-main id="msgDiv" width="" class="app-msg">
-        <span v-if="!toUser" style="font-size: 12px"><i class="el-icon-chat-dot-round"></i>请选择聊天</span>
+        <span v-if="!toGroup" style="font-size: 12px"><i class="el-icon-chat-dot-round"></i>请选择聊天</span>
         <div v-else :key="list.id" v-for="list in msgList">
             <i v-if="list.time_status" style="font-size: 10px">{{ renderTime(list.created_at) }}</i>
             <p v-if="list.status" class="msg-content-left">
@@ -45,11 +46,11 @@ export default {
             type: Array,
             default: [],
         },
-        toUser: {
+        toGroup: {
             type: Boolean,
             default: false,
         },
-        selectUser: {
+        selectGroupMsg: {
             type: Array,
             default: [],
         },

@@ -1,4 +1,5 @@
 <template>
+<!-- 用户单聊信息展示 -->
     <el-main id="msgDiv" width="" class="app-msg">
         <span v-if="!toUser" style="font-size: 12px"><i class="el-icon-chat-dot-round"></i>请选择聊天</span>
         <div v-else :key="list.id" v-for="list in msgList">
