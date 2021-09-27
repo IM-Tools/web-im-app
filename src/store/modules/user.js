@@ -189,6 +189,14 @@ const mutations = {
         localStorage.setItem('grouplist', JSON.stringify(newList))
         state.groupMsgData.push(data)
     },
+    // 改变用户列表提示信息
+    changeUserList(state, data){
+        Object.keys(state.goodslist).forEach( key => {
+            if(state.goodslist[key].id === data.id){
+                state.goodslist[key].msg_total = 0
+            }
+        })
+    }
 }
 
 export default {

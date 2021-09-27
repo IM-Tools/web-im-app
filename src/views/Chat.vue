@@ -135,7 +135,7 @@ export default {
             // 用户群聊信息
             selectGroupMsg: [],
             toGroup: false,
-            //
+            //用户列表
             userList: [],
             msgForm: {
                 from_id: '',
@@ -310,6 +310,10 @@ export default {
             this.sendMsg();
         },
         sendMsg() {
+            // 发送消息的人  this.users  // 接收消息的人  this.selectUser
+            // 清除用户的提示信息
+            this.$store.commit('user/changeUserList', { id: this.selectUser.id });
+            // 发送信息
             if ((!this.toUser && this.isSelect == 1) || (!this.toGroup && this.isSelect == 2)) {
                 this.$notify({
                     title: '提醒',

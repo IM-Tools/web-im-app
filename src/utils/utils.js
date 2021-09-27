@@ -61,7 +61,7 @@ export function setGroupUserLists(data){
 export function setGoodsTop(userList, data) {
 
     var newUserList = [];
-
+    console.log(1231231213)
     if (data.status == 0) {
         userList.forEach((value, key) => {
             if (value.id == data.to_id) {
