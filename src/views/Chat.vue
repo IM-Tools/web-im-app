@@ -440,7 +440,7 @@ export default {
                     this.$notify.error('禁止发送敏感词!');
                     break;
                 case 1000:
-                    if (data.id != user.id) {
+                    if (data.id != this.users.id) {
                         this.$store.commit('user/setOnline', data);
                     }
                     break;
