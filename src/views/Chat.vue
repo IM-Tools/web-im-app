@@ -444,7 +444,9 @@ export default {
                     this.$notify.error('禁止发送敏感词!');
                     break;
                 case 1000:
-                    this.$store.commit('user/setOnline', data);
+                    if (data.id != this.users.id) {
+                        this.$store.commit('user/setOnline', data);
+                    }
                     break;
                 case 200:
                     //拿到相关数据
