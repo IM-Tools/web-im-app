@@ -22,10 +22,11 @@
             </el-header>
             <el-header class="im-user-icon">
                 <el-row :gutter="24">
-                    <el-col :span="12"
-                        ><div class="grid-content bg-purple" v-bind:class="{ is_guttered_class: isSelect == 1 }" @click="this.isSelect = 1">
-                            <i class="el-icon-user-solid" style="font-size: 20px; color: #fff"></i></div
-                    ></el-col>
+                    <el-col :span="12">
+                        <div class="grid-content bg-purple" v-bind:class="{ is_guttered_class: isSelect == 1 }" @click="this.isSelect = 1">
+                            <i class="el-icon-user-solid" style="font-size: 20px; color: #fff"></i>
+                        </div>
+                    </el-col>
                     <el-col :span="12"
                         ><div class="grid-content bg-purple-light" v-bind:class="{ is_guttered_class: isSelect == 2 }" @click="this.isSelect = 2">
                             <i class="el-icon-chat-square" style="font-size: 20px; color: #fff"></i></div
@@ -33,38 +34,40 @@
                 </el-row>
             </el-header>
             <UserGroup v-if="isSelect == 1" @setUser="selectUserAction" :forUser="forUser" :goodslist="goodslist"></UserGroup>
-            <ChatGroup v-if="isSelect == 2" @setUser="selectUserAction" :forUser="forUser" :grouplist="grouplist"></ChatGroup>
+            <ChatGroup v-if="isSelect == 2" @setUser="selectGroupAction" :forUser="forUser" :grouplist="grouplist"></ChatGroup>
         </el-aside>
         <el-container>
             <el-header class="im-msg-header" v-if="isSelect == 1">
                 {{ selectUser.name ? selectUser.name : '未选择好友' }}
             </el-header>
             <el-header class="im-msg-header" v-if="isSelect == 2">
-                {{ selectUser.group_name ? selectUser.group_name : '未选择群组' }}
+                {{ selectGroupMsg.group_name ? selectGroupMsg.group_name : '未选择群组' }}
                 <i v-if="isShowGroupUser == 1" @click="showGroupUser" class="el-icon-caret-bottom"></i>
                 <i v-if="isShowGroupUser == 2" @click="showGroupUser" class="el-icon-caret-top"></i>
             </el-header>
             <el-collapse-transition>
+                <!-- ---selectUser--- -->
                 <div v-show="isShowGroupUser == 2" class="show-users group-show-user animate__animated animate__ffadeInDown">
-                        <i class="el-icon-plus"></i>
-                        <p class="nickname"></p>
-                    </div>
-                    <div class="group-user">
-                        <i class="el-icon-minus"></i>
-                        <p class="nickname"></p>
-                    </div>
-                    <div v-for="(value, key) in selectUser.users" class="group-user" :key="key">
-                        <img :src="value.avatar" />
-                        <p class="nickname">{{ value.remark }}</p>
-                    </div>
+                    <i class="el-icon-plus"></i>
+                    <p class="nickname"></p>
+                </div>
+                <div class="group-user">
+                    <i class="el-icon-minus"></i>
+                    <p class="nickname"></p>
+                </div>
+                <div v-for="(value, key) in selectUser.users" class="group-user" :key="key">
+                    <img :src="value.avatar" />
+                    <p class="nickname">{{ value.remark }}</p>
+                </div>
             </el-collapse-transition>
             <el-main class="img-msg-main">
                 <div v-if="isMenu == false" class="el-backtop" @click="leftMenu">
                     <i @click="showGroupUser" class="el-icon-caret-left"></i>
                 </div>
+                <!-- 聊天内容展示 -->
                 <ChatMsg v-if="isSelect == 1" :msgList="msgData" :toUser="toUser" :selectUser="selectUser" :users="users"></ChatMsg>
-                <ChatGroupMsg v-if="isSelect == 2" :msgList="groupMsgData" :toUser="toUser" :selectUser="selectUser" :users="users"></ChatGroupMsg>
-
+                <ChatGroupMsg v-if="isSelect == 2" :msgList="groupMsgData" :toGroup="toGroup" :selectGroupMsg="selectGroupMsg" :users="users"></ChatGroupMsg>
+                <!-- 信息发送处 -->
                 <el-footer class="app-msg-footer" v-if="selectUser.id">
                     <UploadImg @sendImgMsg="sendImgMsg" :dialogImageUrl="dialogImageUrl"></UploadImg>
                     <Voice @sendVoiceMsg="sendVoiceMsg"></Voice>
@@ -101,10 +104,12 @@ export default {
             ChumAddVisible: false,
             isShowGroupUser: 1,
             activeNames: ['1'],
+            // 选中的时群聊还是用户  1：用户 2：群聊
             isSelect: 1,
             chatBool: false,
             dialogImageUrl: '',
             dialogVisibleImg: false,
+            // 发送的信息类型
             msg_type: 1,
             gifKey: import.meta.env.VITE_APP_GIF_KEY,
             isMenu: true,
@@ -117,15 +122,20 @@ export default {
             md: '',
             socket: null,
             form: {
-                comments: '',
+                comments: ''
             },
             forUser: [],
             searchValue: '',
             text: '',
             value: '',
             dialog: false,
+            // 用户聊天信息
             selectUser: [],
             toUser: false,
+            // 用户群聊信息
+            selectGroupMsg: [],
+            toGroup: false,
+            //
             userList: [],
             msgForm: {
                 from_id: '',
@@ -133,8 +143,8 @@ export default {
                 status: 0,
                 to_id: '',
                 msg_type: 1, //1 文本消息 2 图片
-                channel_type: 1,
-            },
+                channel_type: 1
+            }
         };
     },
     computed: mapState({
@@ -143,7 +153,7 @@ export default {
         goodslist: state => state.user.goodslist,
         msgData: state => state.user.msgData,
         groupMsgData: state => state.user.groupMsgData,
-        grouplist: state => state.user.grouplist,
+        grouplist: state => state.user.grouplist
     }),
     created() {
         this.init();
@@ -170,17 +180,46 @@ export default {
             //  this.isShowGroupUser = index;
             this.isSelect = index;
         },
+        // 选择用户聊天事件
         selectUserAction(data) {
+            console.log(data);
+            // 保存聊天用户
             this.selectUser = data;
+            // 是否选择了聊天对象
             this.toUser = true;
+            // 判断当前聊天状态时群聊还是单独聊天
             if (Number(this.isSelect) == 1) {
                 this.$store.commit('user/clearMsg', { id: data.id });
-                this.getMsgList({ to_id: data.id, channel_type: Number(this.isSelect) });
+                this.getUserMsgList({ to_id: data.id, channel_type: Number(this.isSelect) });
             } else {
                 this.$store.commit('user/clearGroupMsg', { id: data.id });
-                this.getMsgList({ to_id: data.id, channel_type: Number(this.isSelect) });
+                this.getUserMsgList({ to_id: data.id, channel_type: Number(this.isSelect) });
             }
 
+            this.onReadMessage({ to_id: data.id });
+            if (window.innerWidth < 815) {
+                this.isMenu = false;
+            }
+            setTimeout(() => {
+                var ele = document.getElementById('msgDiv');
+                ele.scrollTop = ele.scrollHeight;
+            }, 500);
+        },
+        // 选择群聊事件
+        selectGroupAction(data) {
+            console.log(123);
+            // 保存当前群聊对象
+            this.selectGroupMsg = data;
+            // 是否选择了群聊对象
+            this.toGroup = true;
+            // 判断当前聊天状态时群聊还是单独聊天
+            if (Number(this.isSelect) == 1) {
+                this.$store.commit('user/clearMsg', { id: data.id });
+                this.getGroupMsgList({ to_id: data.id, channel_type: Number(this.isSelect) });
+            } else {
+                this.$store.commit('user/clearGroupMsg', { id: data.id });
+                this.getGroupMsgList({ to_id: data.id, channel_type: Number(this.isSelect) });
+            }
             this.onReadMessage({ to_id: data.id });
             if (window.innerWidth < 815) {
                 this.isMenu = false;
@@ -208,14 +247,14 @@ export default {
                 this.$notify({
                     title: '提醒',
                     message: '刷新好友列表成功',
-                    type: 'success',
+                    type: 'success'
                 });
             } else {
                 this.onGetGroupList();
                 this.$notify({
                     title: '提醒',
                     message: '刷新群聊列表成功',
-                    type: 'success',
+                    type: 'success'
                 });
             }
         },
@@ -237,17 +276,24 @@ export default {
             this.$store.dispatch('auth/logoutUser');
             this.socket.close();
         },
-        reset: function () {
+        reset: function() {
             clearTimeout(this.timeoutObj);
             this.start();
         },
-        start: function () {
+        start: function() {
             this.timeoutObj = setTimeout(() => {
                 this.socket.send('HeartBeat');
             }, this.timeout);
         },
-        getMsgList(params) {
+        // 获取用户聊天信息列表
+        getUserMsgList(params) {
             if (this.toUser) {
+                this.onGetMsgList(params);
+            }
+        },
+        // 获取群聊信息列表
+        getGroupMsgList(params) {
+            if (this.toGroup) {
                 this.onGetMsgList(params);
             }
         },
@@ -264,11 +310,11 @@ export default {
             this.sendMsg();
         },
         sendMsg() {
-            if (!this.toUser) {
+            if ((!this.toUser && this.isSelect == 1) || (!this.toGroup && this.isSelect == 2)) {
                 this.$notify({
                     title: '提醒',
                     message: '未选择聊天对象',
-                    type: 'error',
+                    type: 'error'
                 });
                 return;
             }
@@ -276,7 +322,7 @@ export default {
                 this.$notify({
                     title: '提醒',
                     message: '不能发送空消息～',
-                    type: 'error',
+                    type: 'error'
                 });
                 return;
             }
@@ -284,7 +330,7 @@ export default {
                 this.$notify({
                     title: '提醒',
                     message: '网络断开链接',
-                    type: 'error',
+                    type: 'error'
                 });
                 return;
             }
@@ -295,10 +341,10 @@ export default {
                         status: 0,
                         from_id: this.users.id,
                         msg: this.value,
-                        to_id: this.selectUser.id,
+                        to_id: this.isSelect == 1 ? this.selectUser.id : this.selectGroupMsg.id,
                         msg_type: this.msg_type,
                         channel_type: Number(this.isSelect),
-                        status: 0,
+                        status: 0
                     }
                 );
                 this.msg_type = 1;
@@ -309,9 +355,9 @@ export default {
                         status: 0,
                         from_id: this.users.id,
                         msg: DataBindA(this.value),
-                        to_id: this.selectUser.id,
+                        to_id: this.isSelect == 1 ? this.selectUser.id : this.selectGroupMsg.id,
                         msg_type: judgeData(this.value),
-                        channel_type: Number(this.isSelect),
+                        channel_type: Number(this.isSelect)
                     }
                 );
             }
@@ -339,12 +385,12 @@ export default {
             this.msg_type = 2;
             this.value = value;
         },
-        init: function () {
+        init: function() {
             if (typeof WebSocket === 'undefined') {
                 this.$notify({
                     title: '提醒',
                     message: '您的浏览器不支持socket',
-                    type: 'error',
+                    type: 'error'
                 });
             } else {
                 // 实例化socket
@@ -366,7 +412,7 @@ export default {
                     this.$notify({
                         title: 'error',
                         message: '客户端链接失败',
-                        type: 'error',
+                        type: 'error'
                     });
                 }
             }
@@ -374,17 +420,17 @@ export default {
         onmessage(event) {
             this.reset();
         },
-        onopen: function () {
+        onopen: function() {
             this.reset();
         },
-        open: function (msg) {
+        open: function(msg) {
             console.log(msg);
         },
-        error: function () {
+        error: function() {
             this.socket = null;
             this.$notify.error('连接异常请检查网络');
         },
-        getMessage: function (msg) {
+        getMessage: function(msg) {
             console.log(msg);
             let data = JSON.parse(msg.data);
             const { code } = data;
@@ -413,10 +459,10 @@ export default {
                     break;
             }
         },
-        send: function (params = {}) {
+        send: function(params = {}) {
             this.socket.send(JSON.stringify(params));
         },
-        close: function () {
+        close: function() {
             console.log('断开');
             //this.reset()
         },
@@ -425,8 +471,8 @@ export default {
             this.CircleVisible = false;
             this.CircleVisible = false;
             done();
-        },
-    },
+        }
+    }
 };
 </script>
 
