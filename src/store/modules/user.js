@@ -2,8 +2,6 @@ import { GetGoodData, GetMsgList, ReadMessage, GetSmToken, GetGroupList } from '
 import nested from './nested'
 import { setGoodsTop, cleanMsg, setUsersStatus, setGroupUserLists, setGroupsTop } from '../../utils/utils'
 
-
-
 const state = () => ({
     goodslist: localStorage.getItem('goodslist') ? JSON.parse(localStorage.getItem('goodslist')) : undefined, //好友列表
     msgData: [],    //单人消息数据
@@ -150,6 +148,7 @@ const mutations = {
         state.groupMsgData = data;
     },
     setOnline(state, data) {
+        console.log(data)
         var newList = setUsersStatus(state.goodslist, data.id, 1)
         state.goodslist = newList;
         localStorage.setItem('goodslist', JSON.stringify(newList))

@@ -46,17 +46,17 @@
             </el-header>
             <el-collapse-transition>
                 <div v-show="isShowGroupUser == 2" class="show-users group-show-user animate__animated animate__ffadeInDown">
-                        <i class="el-icon-plus"></i>
-                        <p class="nickname"></p>
-                    </div>
-                    <div class="group-user">
-                        <i class="el-icon-minus"></i>
-                        <p class="nickname"></p>
-                    </div>
-                    <div v-for="(value, key) in selectUser.users" class="group-user" :key="key">
-                        <img :src="value.avatar" />
-                        <p class="nickname">{{ value.remark }}</p>
-                    </div>
+                    <i class="el-icon-plus"></i>
+                    <p class="nickname"></p>
+                </div>
+                <div class="group-user">
+                    <i class="el-icon-minus"></i>
+                    <p class="nickname"></p>
+                </div>
+                <div v-for="(value, key) in selectUser.users" class="group-user" :key="key">
+                    <img :src="value.avatar" />
+                    <p class="nickname">{{ value.remark }}</p>
+                </div>
             </el-collapse-transition>
             <el-main class="img-msg-main">
                 <div v-if="isMenu == false" class="el-backtop" @click="leftMenu">
@@ -394,7 +394,9 @@ export default {
                     this.$notify.error('禁止发送敏感词!');
                     break;
                 case 1000:
-                    this.$store.commit('user/setOnline', data);
+                    if (data.id != user.id) {
+                        this.$store.commit('user/setOnline', data);
+                    }
                     break;
                 case 200:
                     //拿到相关数据
