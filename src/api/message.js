@@ -23,6 +23,14 @@ export function GetGoodData(query) {
     });
 }
 
+export function GetFriendListData(query) {
+    return request({
+        url: '/FriendList',
+        method: 'get',
+        params: query
+    });
+}
+
 export function GetMsgList(query) {
     if(query.channel_type==1){
         var url ='/InformationHistory'   

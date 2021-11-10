@@ -1,4 +1,4 @@
-import { GetGoodData, GetMsgList, ReadMessage, GetSmToken, GetGroupList } from '../../api/message'
+import {GetMsgList, ReadMessage, GetSmToken, GetGroupList,GetFriendListData } from '../../api/message'
 import nested from './nested'
 import { setGoodsTop, cleanMsg, setUsersStatus, setGroupUserLists, setGroupsTop } from '../../utils/utils'
 
@@ -30,8 +30,9 @@ const actions = {
         if (state.goodslist != undefined) {
             return
         }
-        GetGoodData(params).then(response => {
+        GetFriendListData(params).then(response => {
             const { code, data } = response;
+         
             commit('setGoodslist', data.list);
         });
     },
@@ -108,8 +109,11 @@ const mutations = {
    
     },
     setMsgData(state, data) {
+       
+        data = data.list
         var lets = data.length
         data.forEach((value, key) => {
+           
             if (lets != key + 1) {
                 var last_time = new Date(value.created_at)
                 var next_time = new Date(data[key + 1].created_at)

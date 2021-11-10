@@ -3,7 +3,7 @@
         <el-aside style="transition: width 0.5s" :class="isMenu == true ? 'left-header-according' : 'left-header-hidden'">
             <el-header class="im-user-header">
                 <img class="users-img" :src="users.avatar" />
-                <span style="color: #fff; margin-left: 10px; font-size: 18px">{{ users.name }}</span>
+                <span    style="color: #fff; margin-left: 10px; font-size: 18px">{{ users.name }} </span>
                 <el-dropdown>
                     <i class="el-icon-s-unfold" style="margin-left: 15px; font-size: 20px"></i>
                     <template #dropdown>
@@ -115,14 +115,14 @@ export default {
             isMenu: true,
             GoodFriendDialogVisible: false,
             CircleVisible: false,
-            timeout: 60000, //60ms
+            timeout: 10000, //60ms
             timeoutObj: null,
             placeholder: '开始聊天～',
             ws: import.meta.env.VITE_APP_WS,
             md: '',
             socket: null,
             form: {
-                comments: ''
+                comments: '',
             },
             forUser: [],
             searchValue: '',
@@ -143,8 +143,8 @@ export default {
                 status: 0,
                 to_id: '',
                 msg_type: 1, //1 文本消息 2 图片
-                channel_type: 1
-            }
+                channel_type: 1,
+            },
         };
     },
     computed: mapState({
@@ -153,7 +153,7 @@ export default {
         goodslist: state => state.user.goodslist,
         msgData: state => state.user.msgData,
         groupMsgData: state => state.user.groupMsgData,
-        grouplist: state => state.user.grouplist
+        grouplist: state => state.user.grouplist,
     }),
     created() {
         this.init();
@@ -247,14 +247,14 @@ export default {
                 this.$notify({
                     title: '提醒',
                     message: '刷新好友列表成功',
-                    type: 'success'
+                    type: 'success',
                 });
             } else {
                 this.onGetGroupList();
                 this.$notify({
                     title: '提醒',
                     message: '刷新群聊列表成功',
-                    type: 'success'
+                    type: 'success',
                 });
             }
         },
@@ -276,11 +276,11 @@ export default {
             this.$store.dispatch('auth/logoutUser');
             this.socket.close();
         },
-        reset: function() {
+        reset: function () {
             clearTimeout(this.timeoutObj);
             this.start();
         },
-        start: function() {
+        start: function () {
             this.timeoutObj = setTimeout(() => {
                 this.socket.send('HeartBeat');
             }, this.timeout);
@@ -318,7 +318,7 @@ export default {
                 this.$notify({
                     title: '提醒',
                     message: '未选择聊天对象',
-                    type: 'error'
+                    type: 'error',
                 });
                 return;
             }
@@ -326,7 +326,7 @@ export default {
                 this.$notify({
                     title: '提醒',
                     message: '不能发送空消息～',
-                    type: 'error'
+                    type: 'error',
                 });
                 return;
             }
@@ -334,7 +334,7 @@ export default {
                 this.$notify({
                     title: '提醒',
                     message: '网络断开链接',
-                    type: 'error'
+                    type: 'error',
                 });
                 return;
             }
@@ -348,7 +348,7 @@ export default {
                         to_id: this.isSelect == 1 ? this.selectUser.id : this.selectGroupMsg.id,
                         msg_type: this.msg_type,
                         channel_type: Number(this.isSelect),
-                        status: 0
+                        status: 0,
                     }
                 );
                 this.msg_type = 1;
@@ -361,7 +361,7 @@ export default {
                         msg: DataBindA(this.value),
                         to_id: this.isSelect == 1 ? this.selectUser.id : this.selectGroupMsg.id,
                         msg_type: judgeData(this.value),
-                        channel_type: Number(this.isSelect)
+                        channel_type: Number(this.isSelect),
                     }
                 );
             }
@@ -389,12 +389,12 @@ export default {
             this.msg_type = 2;
             this.value = value;
         },
-        init: function() {
+        init: function () {
             if (typeof WebSocket === 'undefined') {
                 this.$notify({
                     title: '提醒',
                     message: '您的浏览器不支持socket',
-                    type: 'error'
+                    type: 'error',
                 });
             } else {
                 // 实例化socket
@@ -405,37 +405,32 @@ export default {
                     }
                     this.socket = new WebSocket(this.ws + '?token=' + Cookies.get('token'));
                     // 监听socket连接
-                    this.socket.onopen = this.open;
-                    // 监听socket错误信息
-                    this.socket.onerror = this.error;
+                    this.socket.onopen = this.onopen;
                     // 监听socket消息
                     this.socket.onmessage = this.getMessage;
-
-                    this.socket.onopen = this.onopen;
+                    // 监听socket错误信息
+                    this.socket.onerror = this.error;
                 } catch (error) {
                     this.$notify({
                         title: 'error',
                         message: '客户端链接失败',
-                        type: 'error'
+                        type: 'error',
                     });
                 }
             }
         },
-        onmessage(event) {
-            this.reset();
+        onopen: function () {
+            this.start();
         },
-        onopen: function() {
-            this.reset();
-        },
-        open: function(msg) {
+        open: function (msg) {
             console.log(msg);
         },
-        error: function() {
+        error: function () {
             this.socket = null;
             this.$notify.error('连接异常请检查网络');
         },
-        getMessage: function(msg) {
-            console.log(msg);
+        getMessage: function (msg) {
+            this.reset();
             let data = JSON.parse(msg.data);
             const { code } = data;
             //监听消息 以及操作逻辑
@@ -465,20 +460,24 @@ export default {
                     break;
             }
         },
-        send: function(params = {}) {
-            this.socket.send(JSON.stringify(params));
+        send: function (params = {}) {
+            if (this.socket == null) {
+               this.init();
+            } else {
+                this.socket.send(JSON.stringify(params));
+            }
         },
-        close: function() {
+        close: function () {
             console.log('断开');
-            //this.reset()
+            this.socket = null;
         },
         handleFriendDialogClose(done) {
             this.GoodFriendDialogVisible = false;
             this.CircleVisible = false;
             this.CircleVisible = false;
             done();
-        }
-    }
+        },
+    },
 };
 </script>
 
