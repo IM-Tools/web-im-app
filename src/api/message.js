@@ -7,6 +7,16 @@ export function GetSmToken() {
     });
 }
 
+export function GetUsersList(query)
+{
+    //userlist
+    return request({
+        url: '/UsersList',
+        method: 'get',
+        params: query
+    });
+}
+
 export function GetGroupList(params) {
     return request({
         url: '/GetGroupList',

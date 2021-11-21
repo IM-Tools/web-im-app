@@ -77,7 +77,7 @@
         </el-container>
         <GoodFriend @setChatGroup="setChatGroup" :GoodFriendDialogVisible="GoodFriendDialogVisible" :before-close="handleFriendDialogClose"></GoodFriend>
         <CircleFiends :CircleVisible="CircleVisible" :before-close="handleFriendDialogClose"></CircleFiends>
-        <Friend :ChumAddVisible="ChumAddVisible" :GoodFriendDialogVisible="GoodFriendDialogVisible" :before-close="handleFriendDialogClose"></Friend>
+        <Friend @setNotification="setNotification" :ChumAddVisible="ChumAddVisible" :GoodFriendDialogVisible="GoodFriendDialogVisible" :before-close="handleFriendDialogClose"></Friend>
     </el-container>
 </template>
 <script>
@@ -138,7 +138,8 @@ export default {
             //用户列表
             userList: [],
             msgForm: {
-                from_id: '',
+                code:200,
+                from_id:'',
                 msg: '',
                 status: 0,
                 to_id: '',
@@ -158,6 +159,7 @@ export default {
     created() {
         this.init();
         this.onGetgoodlist();
+        this.onNotFriendList();
         this.onGetGroupList();
         this.userList = this.goodslist;
     },
@@ -173,7 +175,7 @@ export default {
                 this.isShowGroupUser = 1;
             }
         },
-        ...mapActions('user', ['onGetgoodlist', 'onGetMsgList', 'onReadMessage', 'onGetGroupList']),
+        ...mapActions('user', ['onGetgoodlist', 'onGetMsgList',  'onGetGroupList','onNotFriendList']),
         // ...mapActions('group', ['onGetGroupList']),
 
         selectGroup(index) {
@@ -196,7 +198,7 @@ export default {
                 this.getUserMsgList({ to_id: data.id, channel_type: Number(this.isSelect) });
             }
 
-            this.onReadMessage({ to_id: data.id });
+        
             if (window.innerWidth < 815) {
                 this.isMenu = false;
             }
@@ -220,7 +222,7 @@ export default {
                 this.$store.commit('user/clearGroupMsg', { id: data.id });
                 this.getGroupMsgList({ to_id: data.id, channel_type: Number(this.isSelect) });
             }
-            this.onReadMessage({ to_id: data.id });
+         
             if (window.innerWidth < 815) {
                 this.isMenu = false;
             }
@@ -342,7 +344,7 @@ export default {
                 this.msgForm = Object.assign(
                     {},
                     {
-                        status: 0,
+                        code:200,
                         from_id: this.users.id,
                         msg: this.value,
                         to_id: this.isSelect == 1 ? this.selectUser.id : this.selectGroupMsg.id,
@@ -356,6 +358,7 @@ export default {
                 this.msgForm = Object.assign(
                     {},
                     {
+                        code:200,
                         status: 0,
                         from_id: this.users.id,
                         msg: DataBindA(this.value),

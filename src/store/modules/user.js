@@ -1,4 +1,4 @@
-import {GetMsgList, ReadMessage, GetSmToken, GetGroupList,GetFriendListData } from '../../api/message'
+import {GetMsgList, ReadMessage, GetSmToken, GetGroupList,GetFriendListData,GetUsersList } from '../../api/message'
 import nested from './nested'
 import { setGoodsTop, cleanMsg, setUsersStatus, setGroupUserLists, setGroupsTop } from '../../utils/utils'
 
@@ -10,6 +10,7 @@ const state = () => ({
     grouplist: localStorage.getItem('grouplist') ? JSON.parse(localStorage.getItem('grouplist')) : undefined, //好友列表
     groupMsgData: [],     // 群聊消息数据
     groupMsgDataList: [], // 群聊消息列表,
+    userlist:localStorage.getItem('userlist') ? JSON.parse(localStorage.getItem('userlist')) : undefined,
     groupUserList: localStorage.getItem('groupUserList') ? JSON.parse(localStorage.getItem('groupUserList')) : undefined, //群聊用户列表 groupUserList
 })
 
@@ -47,6 +48,12 @@ const actions = {
 
         });
     },
+    onNotFriendList({commit},params) {
+        GetUsersList(params).then(response => {
+            const { code, data } = response;
+            commit('setNotFriendList',data.list)
+        })
+    },
     onReadMessage({ commit }, params) {
         //ReadMessage
         ReadMessage(params).then((response) => {
@@ -64,9 +71,12 @@ const actions = {
 }
 
 const mutations = {
+    setNotFriendList(state, data){
+        state.userlist = data;
+        localStorage.setItem('userlist', JSON.stringify(data))
+    },
     setGroupUserList(state, data) {
         state.groupUserList = data;
-        console.log(JSON.stringify(data))
         localStorage.setItem('groupUserList', JSON.stringify(data))
     },
     setSmToken(state, data) {

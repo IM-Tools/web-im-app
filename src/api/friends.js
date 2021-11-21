@@ -9,6 +9,17 @@ export function GetFriendsList()
     });
 }
 
+
+export function addFriendRequest(params)
+{
+    return request({
+        url: '/SendFriendRequest',
+        method: 'post',
+        data:qs.stringify(params)
+    });
+}
+
+
 export function GetFriendForRecord()
 {
     return request({
@@ -19,14 +30,7 @@ export function GetFriendForRecord()
 }
 
 
-export function SendFriendRequest(params)
-{
-    return request({
-        url: '/SendFriendRequest',
-        method: 'post',
-        params: qs(params)
-    });
-}
+
 
 export function ByFriendRequest(params)
 {
